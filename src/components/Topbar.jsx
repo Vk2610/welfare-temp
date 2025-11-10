@@ -6,22 +6,25 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-
-export default function Topbar() {
+import { handleLogout } from "../utils/Links";
+import { useNavigate } from "react-router-dom";
+export default function Topbar({ toggleDrawer }) {
+  const navigate = useNavigate();
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
-
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleProfile = () => {
+    handleClose();
+    // Navigate to the correct profile path based on user role
+    const role = localStorage.getItem("role");
+    const profilePath = role ? `/${role}/profile` : "/user/profile";
+    navigate(profilePath);
   };
 
   const handleClose = () => {
@@ -30,9 +33,13 @@ export default function Topbar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" style={{
-        backgroundColor: 'rgb(7, 170, 23)'
-      }}>
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        style={{
+          backgroundColor: "rgb(7, 170, 23)",
+        }}
+      >
         <Toolbar>
           <IconButton
             size="large"
@@ -40,6 +47,7 @@ export default function Topbar() {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={() => toggleDrawer()}
           >
             <MenuIcon />
           </IconButton>
@@ -49,7 +57,7 @@ export default function Topbar() {
           {auth && (
             <div>
               <IconButton
-                size="large"
+                className="h-9 w-9"
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
@@ -73,8 +81,27 @@ export default function Topbar() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                <MenuItem
+                  onClick={handleProfile}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "rgba(7, 170, 23, 0.08)",
+                    },
+                  }}
+                >
+                  Profile
+                </MenuItem>
+                <MenuItem
+                  onClick={handleLogout}
+                  sx={{
+                    color: "red",
+                    "&:hover": {
+                      backgroundColor: "rgba(211, 47, 47, 0.08)",
+                    },
+                  }}
+                >
+                  Logout
+                </MenuItem>
               </Menu>
             </div>
           )}
