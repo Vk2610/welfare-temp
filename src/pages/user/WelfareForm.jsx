@@ -1,12 +1,14 @@
 // SevakWelfareForm.jsx
 import React, { useState } from "react";
+import axios from "axios";
+import UploadFile from "../../components/UploadFile";
 
 export default function SevakWelfareForm() {
   const [form, setForm] = useState({
     applicantName: "",
     branchName: "",
     joiningDate: "",
-    age: "",
+    designation: "",
     totalService: "",
     monthlySalary: "",
     mobile: "",
@@ -29,16 +31,127 @@ export default function SevakWelfareForm() {
     branchNameForDeposit: "",
     savingsAccountNo: "",
     officerRecommendation: "",
+    applicantSignature: null,
   });
+
+  const [signaturePreview, setSignaturePreview] = useState(null);
+  const [files, setFiles] = useState([]);
+
+  const handleDocsUpload = (uploadedFiles) => {
+    console.log("handleDocsUpload called");
+    setFiles(uploadedFiles);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((p) => ({ ...p, [name]: value }));
   };
 
+  const handleSignatureUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
+        alert("Please upload a valid image or PDF file");
+        return;
+      }
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size should not exceed 5MB");
+        return;
+      }
+      setForm((p) => ({ ...p, applicantSignature: file }));
+
+      // Create preview for images
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setSignaturePreview(event.target.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setSignaturePreview(null);
+      }
+    }
+  };
+
   const handlePrint = (e) => {
     e.preventDefault();
     window.print();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate required fields
+    if (!form.applicantName || !form.branchName || !form.mobile) {
+      alert("Please fill in all required fields (Name, Branch, Mobile)");
+      return;
+    }
+
+    if (files.length < 4) {
+      alert("Please upload required documents");
+      return;
+    }
+
+    try {
+      // Prepare FormData for file upload
+      const formData = new FormData();
+      Object.entries(form).forEach(([key, value]) => {
+        if (key === "applicantSignature" && value) {
+          formData.append(key, value);
+        } else if (key !== "applicantSignature") {
+          formData.append(key, value || "");
+        }
+      });
+
+      // Submit to backend (update URL as needed)
+      const response = await axios.post(
+        "http://localhost:3000/api/welfare-form",
+        form,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      alert("Form submitted successfully!");
+      console.log("Response:", response.data);
+
+      // Reset form after successful submission
+      setForm({
+        applicantName: "",
+        branchName: "",
+        joiningDate: "",
+        designation: "",
+        totalService: "",
+        monthlySalary: "",
+        mobile: "",
+        patientName: "",
+        relation: "",
+        illnessNature: "",
+        illnessDuration: "",
+        medicineBill: "",
+        doctorBill: "",
+        otherExpenses: "",
+        totalExpenses: "",
+        certificatesAttached: "",
+        sanctionLetter: "",
+        previousHelp: "",
+        previousHelpDetails: "",
+        annualDeductions: "",
+        currentDeductionMonth: "",
+        requestedAmountNumbers: "",
+        requestedAmountWords: "",
+        branchNameForDeposit: "",
+        savingsAccountNo: "",
+        officerRecommendation: "",
+        applicantSignature: null,
+      });
+      setSignaturePreview(null);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Error submitting form. Please try again.");
+    }
   };
 
   return (
@@ -48,63 +161,95 @@ export default function SevakWelfareForm() {
         {`@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap');`}
       </style>
 
-      <div className="max-w-6xl mx-auto bg-white shadow-md rounded-md p-8 print:p-4 print:shadow-none print:rounded-none">
+      <div
+        className="max-w-6xl mx-auto bg-white shadow-md rounded-md p-8 print:p-4 print:shadow-none print:rounded-none"
+        style={{ fontSize: "1.5rem", lineHeight: "1.6" }}
+      >
         {/* Form area */}
-        <form className="text-gray-900" onSubmit={handlePrint}>
+        <form className="text-gray-900">
           {/* Header (keeps same Marathi text) */}
-          <div className="text-center mb-4 print:mb-2" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-            <h1 className="text-lg font-bold">रयत शिक्षण संस्था, रयत सेवक वेलफेअर फंड, सातारा.</h1>
-            <h2 className="text-base underline font-medium mt-1">मदत मागणी अर्ज</h2>
+          <div
+            className="text-center mb-4 print:mb-2"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
+            <h1 className="text-2xl font-bold">
+              रयत शिक्षण संस्था, रयत सेवक वेलफेअर फंड, सातारा.
+            </h1>
+            <h2 className="text-xl underline font-medium mt-1">
+              मदत मागणी अर्ज
+            </h2>
           </div>
 
           {/* Address block */}
-          <div className="mb-4 text-sm" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+          <div
+            className="mb-4 text-base"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
             <p>प्रति,</p>
             <p>मा. चेअरमनसो,</p>
-            <p>रयत शिक्षण संस्ता, रयत सेवक वेलफेअर फंड, सातारा.</p>
+            <p>रयत शिक्षण संस्था, रयत सेवक वेलफेअर फंड, सातारा.</p>
           </div>
 
-          <div className="mb-4 text-sm" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-            <p><strong>विषय :</strong> सेवक वेलफेअर फंडातून आर्थिक मदत मिळाविण्याबाबत.</p>
+          <div
+            className="mb-4 text-base"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
+            <p className="ml-10">
+              <strong>
+                विषय: सेवक वेल्फेअर फंडातून आर्थिक मदत मिळण्याबाबत.
+              </strong>
+            </p>
           </div>
 
-          <div className="mb-6 text-sm" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+          <div
+            className="mb-6 text-base"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
             <p>
               महाशय, <br />
-              मी खालील कारणाक्रता आपला सेवक वेलफेअर फंडातून आर्थिक मदत मिळावी म्हणून हा अर्ज करीत आहे. त्यासाठी मी माझी पुढीलप्रमाणे माहिती देत आहे.
+              <p className="ml-5">
+                मी खालील कारणाकरिता आपल्या सेवक वेल्फेअर फंडातून आर्थिक मदत
+                मिळावी म्हणून हा अर्ज करीत आहे. त्यासाठी मी माझी पुढीलप्रमाणे
+                माहिती देत आहे.
+              </p>
             </p>
           </div>
 
           {/* 1. Applicant details */}
-          <div className="mb-4 space-y-3" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-            <div className="flex items-center gap-3 text-sm">
-              <div className="w-1/3">१ अ) अर्जदाराचे संपूर्ण नाव (प्रथम आडनाव )</div>
+          <div
+            className="mb-4 space-y-3"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
+            <div className="flex items-center gap-3 text-base">
+              <div className="w-1/3">
+                १ अ) अर्जदाराचे संपूर्ण नाव (प्रथम आडनाव )
+              </div>
               <div className="flex-1">
                 <input
                   name="applicantName"
                   value={form.applicantName}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="_______________________________________"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-3 text-sm">
+            <div className="flex items-center gap-3 text-base">
               <div className="w-1/3">ब) शाखेचे नाव</div>
               <div className="flex-1">
                 <input
                   name="branchName"
                   value={form.branchName}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="_______________________________________________________"
                 />
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-3 text-sm">
-              <div className="flex-1 min-w-[160px]">
+            <div className="flex flex-wrap gap-3 text-base">
+              <div className="flex-1 min-w-40">
                 क) नेमणूक तारीख
                 <div>
                   <input
@@ -112,32 +257,32 @@ export default function SevakWelfareForm() {
                     value={form.joiningDate}
                     onChange={handleChange}
                     type="date"
-                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   />
                 </div>
               </div>
 
               <div className="flex-1 min-w-[120px]">
-                ड) वय
+                ड)हुद्दा
                 <div>
                   <input
-                    name="age"
-                    value={form.age}
+                    name="designation"
+                    value={form.designation}
                     onChange={handleChange}
-                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                     placeholder="____"
                   />
                 </div>
               </div>
 
-              <div className="flex-1 min-w-[160px]">
+              <div className="flex-1 min-w-40">
                 ई) संस्थेतील एकूण सेवाकालावधी
                 <div>
                   <input
                     name="totalService"
                     value={form.totalService}
                     onChange={handleChange}
-                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                     placeholder="______________"
                   />
                 </div>
@@ -146,15 +291,18 @@ export default function SevakWelfareForm() {
           </div>
 
           {/* 2. Salary and mobile */}
-          <div className="mb-4 text-sm" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+          <div
+            className="mb-4 text-base"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
             <div className="flex items-center gap-3">
-              <div className="w-1/2">२. दरमहा सव्वा पगार</div>
+              <div className="w-1/2">२. दरमहा सर्व पगार</div>
               <div className="w-1/2">
                 <input
                   name="monthlySalary"
                   value={form.monthlySalary}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="__________________"
                 />
               </div>
@@ -167,7 +315,7 @@ export default function SevakWelfareForm() {
                   name="mobile"
                   value={form.mobile}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="________________________"
                 />
               </div>
@@ -175,15 +323,20 @@ export default function SevakWelfareForm() {
           </div>
 
           {/* 3. Patient details */}
-          <div className="mb-4 space-y-3 text-sm" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+          <div
+            className="mb-4 space-y-3 text-base"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
             <div className="flex gap-3 items-start">
-              <div className="w-1/3">३. अ) ज्याचे आजारासाठी मदत हवी आहे त्याचे संपूर्ण नाव</div>
+              <div className="w-1/3">
+                ३. अ) ज्याचे आजारासाठी मदत हवी आहे त्याचे संपूर्ण नाव
+              </div>
               <div className="flex-1">
                 <input
                   name="patientName"
                   value={form.patientName}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="______________________________________"
                 />
               </div>
@@ -196,7 +349,7 @@ export default function SevakWelfareForm() {
                   name="relation"
                   value={form.relation}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="________________"
                 />
               </div>
@@ -207,7 +360,7 @@ export default function SevakWelfareForm() {
                   name="illnessNature"
                   value={form.illnessNature}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm mt-1"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base mt-1"
                   placeholder="_________________________"
                 />
               </div>
@@ -219,14 +372,17 @@ export default function SevakWelfareForm() {
                 name="illnessDuration"
                 value={form.illnessDuration}
                 onChange={handleChange}
-                className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm mt-1"
+                className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base mt-1"
                 placeholder="__________________________________________________"
               />
             </div>
           </div>
 
           {/* 4. Bills and expenses */}
-          <div className="mb-4 text-sm space-y-2" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+          <div
+            className="mb-4 text-base space-y-2"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
             <div className="flex gap-3 items-center">
               <div className="w-1/3">४ अ) औषधे रु.</div>
               <div className="w-1/3">
@@ -234,7 +390,7 @@ export default function SevakWelfareForm() {
                   name="medicineBill"
                   value={form.medicineBill}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="____________________"
                 />
               </div>
@@ -245,7 +401,7 @@ export default function SevakWelfareForm() {
                   name="doctorBill"
                   value={form.doctorBill}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="____________________"
                 />
               </div>
@@ -258,7 +414,7 @@ export default function SevakWelfareForm() {
                   name="otherExpenses"
                   value={form.otherExpenses}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="____________________"
                 />
               </div>
@@ -269,7 +425,7 @@ export default function SevakWelfareForm() {
                   name="totalExpenses"
                   value={form.totalExpenses}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="___________________"
                 />
               </div>
@@ -277,94 +433,104 @@ export default function SevakWelfareForm() {
           </div>
 
           {/* 5-7 additional declarations */}
-          <div className="mb-4 text-sm space-y-2" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-            <div>५. वरील प्रमाणे झालेल्या खर्चाची बिले व पावत्या क्रमांक ०१ ते ___ सोबत जोडलेली आहेत.</div>
+          <div
+            className="mb-4 text-base space-y-2"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
+            <div>
+              ५. वरील प्रमाणे झालेल्या खर्चाची बिले व पावत्या क्रमांक ०१ ते ___
+              सोबत जोडलेली आहेत.
+            </div>
 
             <div className="flex gap-3 items-center">
-              <div className="w-1/2">६. वर नमूद केलेल्या आजारांबाबत डॉक्टरांचे सर्टिफिकेट जोडले आहे.</div>
               <div className="w-1/2">
-                <input
+                ६. वर नमूद केलेल्या आजारांबाबत डॉक्टरांचे सर्टिफिकेट जोडले आहे.
+              </div>
+              <div className="w-1/2">
+                <select
                   name="certificatesAttached"
                   value={form.certificatesAttached}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
-                  placeholder="होय/नाही"
-                />
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base bg-transparent"
+                >
+                  <option value="">-- निवडा --</option>
+                  <option value="होय">होय</option>
+                  <option value="नाही">नाही</option>
+                </select>
               </div>
             </div>
 
             <div className="flex gap-3 items-start">
-              <div className="w-1/3">७. यापूर्वी फंडातून मदत घेतली आहे / नाही</div>
+              <div className="w-1/3">
+                ७. यापूर्वी फंडातून मदत घेतली आहे / नाही
+              </div>
               <div className="w-2/3">
-                <input
+                <select
                   name="previousHelp"
                   value={form.previousHelp}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
-                  placeholder="होय/नाही"
-                />
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base bg-transparent"
+                >
+                  <option value="">-- निवडा --</option>
+                  <option value="होय">होय</option>
+                  <option value="नाही">नाही</option>
+                </select>
                 <textarea
                   name="previousHelpDetails"
                   value={form.previousHelpDetails}
                   onChange={handleChange}
                   rows="3"
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm mt-2"
-                  placeholder="अ) मदत घेतली असल्यास किती वेळा, तपशील लिहा..."
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                 />
               </div>
             </div>
           </div>
 
           {/* 8-9 account & requested amount */}
-          <div className="mb-4 text-sm space-y-2" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+          <div
+            className="mb-4 text-base space-y-2"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
             <div className="flex gap-3 items-center">
-              <div className="w-1/2">८ अ) प्रते्यक वर्षीसाठी सेवक वेलफेअर फंडाची वगणी दिलेली आहे काय</div>
               <div className="w-1/2">
-                <input
+                ८ अ) प्रत्येक वर्षासाठी सेवक वेलफेअर फंडाची वगणी दिलेली आहे काय
+              </div>
+              <div className="w-1/2">
+                <select
                   name="annualDeductions"
                   value={form.annualDeductions}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
-                  placeholder="होय/नाही"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base bg-transparent"
+                  // placeholder="____________________________"
                 />
               </div>
             </div>
 
             <div className="flex gap-3 items-center">
-              <div className="w-1/2">ब) चालू वर्षी वगणी पाठवलेला महिना व रक्कम रुपये</div>
-              <div className="w-1/2">
-                <input
-                  name="currentDeductionMonth"
-                  value={form.currentDeductionMonth}
-                  onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
-                  placeholder="____________________________"
-                />
+              <div className="w-1/3">
+                ९ अ) आता किती मदतीची आवश्यकता आहे ती रक्कम रु. अंकी व अक्षरी
               </div>
-            </div>
-
-            <div className="flex gap-3 items-center">
-              <div className="w-1/3">९ अ) आता किती मदतीची आवश्यकता आहे ती रक्कम रु. अंकी व अक्षरी</div>
               <div className="w-2/3">
                 <input
                   name="requestedAmountNumbers"
                   value={form.requestedAmountNumbers}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm mb-1"
-                  placeholder="___________________"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base mb-1"
+                  placeholder="(अंकी) ___________________"
                 />
                 <input
                   name="requestedAmountWords"
                   value={form.requestedAmountWords}
                   onChange={handleChange}
-                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                  className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="(अक्षरी) ____________________________________"
                 />
               </div>
             </div>
 
             <div className="mt-2">
-              ब) किमतीने मंजूर केलेली मदत जमा रयत सेवक को-ऑपरेटिव्ह बँक लिमिटेड सातारा शाखा
+              ब) किमतीने मंजूर केलेली मदत जमा रयत सेवक को-ऑपरेटिव्ह बँक लिमिटेड
+              सातारा शाखा
               <div className="flex gap-3 mt-2">
                 <div className="w-1/2">
                   शाखा
@@ -372,7 +538,7 @@ export default function SevakWelfareForm() {
                     name="branchNameForDeposit"
                     value={form.branchNameForDeposit}
                     onChange={handleChange}
-                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                     placeholder="__________"
                   />
                 </div>
@@ -382,7 +548,7 @@ export default function SevakWelfareForm() {
                     name="savingsAccountNo"
                     value={form.savingsAccountNo}
                     onChange={handleChange}
-                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
+                    className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                     placeholder="___________________"
                   />
                 </div>
@@ -391,52 +557,70 @@ export default function SevakWelfareForm() {
           </div>
 
           {/* Declaration & signatures */}
-          <div className="mb-6 text-sm" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+          <div
+            className="mb-6 text-base"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
             <p>
-              अर्जातील वरील दिलेली माहिती खरी व परिपूर्ण आहे. त्यामध्ये काही चूक किंवा विसंगती आढळल्यास त्याबाबत संस्थेकडून होणाऱ्या कारवाईस मी जबाबदार राहीन याची मला पूर्ण जाणीव आहे.
+              अर्जात वर दिलेली माहिती खरी व परिस्थितीत धरून आहे. त्यामध्ये काही
+              चूक अगर विसंगती आढळल्यास त्याबाबत संस्थेकडून माझ्याविरुद्ध
+              होणाऱ्या कारवाईस मी जबाबदार राहील याची मला पूर्ण जाणीव आहे तरी
+              माझ्या अर्जाचा सहानुभूतीपूर्वक विचार करून फंडातून मला मदत मिळावी
+              अशी विनंती आहे
             </p>
-
-            {/* <div className="mt-4 text-right space-y-2">
-              <div>—------------------------------------------------------------------------------------------------------------------</div>
-              <p>अर्जदाराचे नाव: __________________________</p>
-              <p>स्वाक्षरी: _____________________________</p>
-              <p>दिनांक: _______________________________</p>
-            </div> */}
           </div>
 
-          {/* Officer / branch head area */}
-          <div className="mb-6 text-sm" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-            <div className="mb-2">शाखाप्रमुख यांचे मागचे टिप्पणी व शिफारस:</div>
-            <textarea
-              name="officerRecommendation"
-              value={form.officerRecommendation}
-              onChange={handleChange}
-              rows="4"
-              className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-sm"
-              placeholder="शाखाप्रमुखांचा मजकूर येथे लिहा..."
-            />
-            <div className="mt-4">
-              <p>शाखाप्रमुखाची सही व दिनांक : ____________________________</p>
+          {/* applicant signature at right side */}
+          <div
+            className="mb-6 text-base flex justify-end"
+            style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+          >
+            <div className="text-right">
+              <p className="mb-2">अर्जदाराची सही :</p>
+              <div className="mb-3">
+                <input
+                  type="file"
+                  accept="image/*,.pdf"
+                  onChange={handleSignatureUpload}
+                  className="text-base"
+                />
+              </div>
+              {signaturePreview && (
+                <div className="mb-2 border border-gray-300 p-2 rounded">
+                  <img
+                    src={signaturePreview}
+                    alt="Signature Preview"
+                    className="max-h-20 max-w-32"
+                  />
+                </div>
+              )}
+              {form.applicantSignature && (
+                <p className="text-base text-gray-600">
+                  📎 {form.applicantSignature.name}
+                </p>
+              )}
+              <p className="text-base text-gray-500 mt-1">
+                (Image or PDF max 5MB)
+              </p>
             </div>
           </div>
 
-          {/* Notes */}
-          <div className="mb-6 text-xs text-gray-700" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-            <p>टीप: सेवकाच्या अर्जातील खर्चाची एकूण रक्कम रुपये 50 हजार पेक्षा जास्त असल्यास अशा अर्जावर विभागीय अधिकारी यांची शिफारस घेणे बंधनकारक आहे.</p>
-            <ol className="list-decimal ml-5 mt-2">
-              <li>अर्जासोबत जोडलेली सर्व बिले सत्यप्रति करणे आवश्यक आहे.</li>
-              <li>अर्जासोबत मागील दोन वर्षांची वगणी कपात यादी जोडणे आवश्यक आहे.</li>
-              <li>फंडातून मदत देताना कुटुंबातील घटक व परिस्थिती विचारात घेतली जाईल.</li>
-            </ol>
-          </div>
-
+          <UploadFile onUpload={handleDocsUpload} />
           {/* Print / Submit button */}
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-3">
             <button
-              type="submit"
-              className="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800 focus:outline-none"
+              type="button"
+              onClick={handlePrint}
+              className="bg-blue-600 text-white px-4 py-2 text-xl rounded-md hover:bg-blue-700 focus:outline-none transition"
             >
-              🖨️ Print / Submit
+              🖨️ Print
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="bg-green-700 text-white px-4 py-2 text-xl rounded-md hover:bg-green-800 focus:outline-none transition"
+            >
+              ✓ Submit
             </button>
           </div>
         </form>
@@ -445,8 +629,8 @@ export default function SevakWelfareForm() {
       {/* Print styles */}
       <style>
         {`
-          /* Print page settings */
-          @page {
+          /* Print pdesignation settings */
+          @pdesignation {
             size: A4 portrait;
             margin: 12mm;
           }
@@ -487,10 +671,11 @@ export default function SevakWelfareForm() {
 
             /* Reduce spacing slightly for compact print */
             .max-w-3xl { padding: 8mm !important; }
-            .max-w-3xl input, .max-w-3xl textarea { font-size: 12pt !important; }
+            .max-w-3xl input, .max-w-3xl textarea { font-size: 18pt !important; }
+            .max-w-3xl { font-size: 18pt !important; }
 
-            /* Avoid page-break inside important blocks */
-            form, form > * { page-break-inside: avoid; }
+            /* Avoid pdesignation-break inside important blocks */
+            form, form > * { pdesignation-break-inside: avoid; }
 
             /* Hide the print button */
             button { display: none !important; }

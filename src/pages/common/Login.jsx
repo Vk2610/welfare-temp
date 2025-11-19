@@ -32,9 +32,12 @@ const Login = () => {
       localStorage.setItem("token", token);
       const decoded = jwtDecode(token);
       const role = decoded.role;
+      console.log(decoded.id);
+      
       localStorage.setItem("role", role);
       navigate(`/${role}`);
     } catch (err) {
+      console.log(err);
       setError(
         err.response?.data?.message || "Login failed. Please try again."
       );
