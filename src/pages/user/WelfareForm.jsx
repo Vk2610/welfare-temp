@@ -107,13 +107,13 @@ export default function SevakWelfareForm() {
       });
 
       // Submit to backend (update URL as needed)
-      const response = await axios.post(
-        "http://localhost:3000/api/submit-welfare-form",
-        form,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/submit-welfare-form",
+      //   form,
+      //   {
+      //     headers: { "Content-Type": "multipart/form-data" },
+      //   }
+      // );
 
       alert("Form submitted successfully!");
       console.log("Response:", response.data);
@@ -150,8 +150,8 @@ export default function SevakWelfareForm() {
       });
       setSignaturePreview(null);
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Error submitting form. Please try again.");
+      // console.error("Error submitting form:", error);
+      // alert("Error submitting form. Please try again.");
     }
   };
 
