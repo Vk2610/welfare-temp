@@ -18,6 +18,9 @@ import {
   CheckCircle as CheckCircleIcon,
   Description as DescriptionIcon
 } from "@mui/icons-material";
+import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
+import { jwtDecode } from "jwt-decode";
 
 export default function UploadComponent({
   maxFileSizeMB = 10,
@@ -29,13 +32,13 @@ export default function UploadComponent({
     ".txt",
     ".zip",
   ],
-  onUpload
+  userId
 }) {
   const [documents, setDocuments] = useState([
-    { id: 1, name: "Discharge Certificate", file: null, isMandatory: true },
-    { id: 2, name: "Medical Certificate", file: null, isMandatory: true },
-    { id: 3, name: "Hospital Bill", file: null, isMandatory: true },
-    { id: 4, name: "Medical Report", file: null, isMandatory: true },
+    { id: 1, name: "discharge_certificate", file: null, isMandatory: true },
+    { id: 2, name: "doctor_prescription", file: null, isMandatory: true },
+    { id: 3, name: "medicine_bills", file: null, isMandatory: true },
+    { id: 4, name: "diagnostic_reports", file: null, isMandatory: true },
   ]);
   const [dynamicRows, setDynamicRows] = useState([]);
   const [alert, setAlert] = useState({ show: false, message: "", severity: "error" });
@@ -96,7 +99,7 @@ export default function UploadComponent({
     setDynamicRows(prev => prev.filter(row => row.id !== id));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
     let isRequiredUploaded = false;
     documents.forEach(doc => {
@@ -119,7 +122,26 @@ export default function UploadComponent({
 
     setAlert({ show: true, message: "Documents uploaded successfully!", severity: "success" });
     setTimeout(() => setAlert({ show: false, message: "", severity: "success" }), 3000);
-    onUpload(filesWithData);
+    // onUpload(filesWithData);
+
+    try {
+      const token = localStorage.getItem('token');
+      const decoded = jwtDecode(token);
+      const userId = decoded.id;
+      const formId = uuidv4();
+      const response = await axios.post('http://localhost:3000/user/upload-welfare-docs', {
+        userId: userId,
+        formId: formId,
+        docs: filesWithData
+      });
+      if (response.status == 200) {
+        setAlert({ show: true, message: "Documents uploaded and saved successfully!", severity: "success" });
+      } else {
+        setAlert({ show: true, message: "Failed to save documents", severity: "error" });
+      }
+    } catch (error) {
+      console.log(`Failed uploading docs ${error}`);
+    }
   };
 
   const DocumentCard = ({ doc, onFileUpload, onRemove }) => (

@@ -40,6 +40,7 @@ export default function SevakWelfareForm() {
   const handleDocsUpload = (uploadedFiles) => {
     console.log("handleDocsUpload called");
     setFiles(uploadedFiles);
+    console.log(uploadedFiles);
   };
 
   const handleChange = (e) => {
@@ -107,7 +108,7 @@ export default function SevakWelfareForm() {
 
       // Submit to backend (update URL as needed)
       const response = await axios.post(
-        "http://localhost:3000/api/welfare-form",
+        "http://localhost:3000/api/submit-welfare-form",
         form,
         {
           headers: { "Content-Type": "multipart/form-data" },
