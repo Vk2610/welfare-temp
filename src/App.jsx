@@ -11,7 +11,6 @@ import HomePage from "./pages/common/HomePage";
 
 // user imports
 import UserProfile from "./pages/user/UserProfile";
-import WelfareForm from "./pages/user/WelfareForm";
 import TrackApplication from "./pages/user/TrackApplication";
 import UserHistory from "./pages/user/UserHistory";
 
@@ -25,6 +24,7 @@ import SubAdmHistory from "./pages/sub-admin/SubAdmHistory";
 import AdminProfile from "./pages/admin/AdminProfile";
 import ManageFunds from "./pages/admin/ManageFunds";
 import DataEntry from "./pages/admin/DataEntry";
+import SevakWelfarePage from "./wf-form/SevakWelfarePage";
 
 // Protected Route component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -47,6 +47,7 @@ const App = () => {
     <Router>
       <Routes>
         {/* Public Routes */}
+        {/* <Route path="wf-form" element={<SevakWelfarePage />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/resetPassword" element={<ResetPassword />} />z{" "}
         {/* Protected Routes */}
@@ -61,7 +62,8 @@ const App = () => {
           }
         >
           <Route path="profile" element={<UserProfile />} />
-          <Route path="wf-form" element={<WelfareForm />} />
+          {/* <Route path="wf-form" element={<WelfareForm />} /> */}
+          <Route path="wf-form" element={<SevakWelfarePage />} />
           <Route path="track-application" element={<TrackApplication />} />
           <Route path="history" element={<UserHistory />} />
         </Route>
