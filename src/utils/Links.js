@@ -10,28 +10,30 @@ export const USER_LINKS = [
     {
         key: "Profile",
         label: "Profile",
-        Path: "/user/profile",
+        // Path: "/user/profile",
+        Path: "/profile",
         icon: FaUser, // Pass the icon as a component
     },
     {
         key: "Form",
         label: "Welfare Form",
-        Path: "/user/wf-form",
+        // Path: "/user/wf-form",
+        Path: "/wf-form",
         icon: FaWpforms, // Pass the icon as a component
     },
-    {
-        key: "TrackApplication",
-        label: "Track Application",
-        Path: "/user/track-application",
-        icon: FaSearchLocation
-        , // Pass the icon as a component
-    },
-    {
-        key: "History",
-        label: "History",
-        Path: "/user/history",
-        icon :MdHistory
-    },
+    // {
+    //     key: "TrackApplication",
+    //     label: "Track Application",
+    //     Path: "/user/track-application",
+    //     icon: FaSearchLocation
+    //     , // Pass the icon as a component
+    // },
+    // {
+    //     key: "History",
+    //     label: "History",
+    //     Path: "/user/history",
+    //     icon :MdHistory
+    // },
     // {
     //     key: "Transactions",
     //     label: "Transactions",
@@ -83,8 +85,10 @@ export const ADMIN_LINKS = [
     },
     {
         key: "ManageFunds",
-        label: "Manage Funds",
-        Path: "/admin/manage-funds",
+        label: "Form Approval",
+        // label: "Manage Funds",
+        Path: "/form-approval",
+        // Path: "/admin/manage-funds",
         icon: GiReceiveMoney,
     },
     {

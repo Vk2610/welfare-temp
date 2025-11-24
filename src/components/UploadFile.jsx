@@ -32,7 +32,8 @@ export default function UploadComponent({
     ".txt",
     ".zip",
   ],
-  userId
+  userId,
+  onUpload
 }) {
   const [documents, setDocuments] = useState([
     { id: 1, name: "discharge_certificate", file: null, isMandatory: true },
@@ -122,7 +123,7 @@ export default function UploadComponent({
 
     setAlert({ show: true, message: "Documents uploaded successfully!", severity: "success" });
     setTimeout(() => setAlert({ show: false, message: "", severity: "success" }), 3000);
-    // onUpload(filesWithData);
+    onUpload(filesWithData);
 
     // try {
     //   const token = localStorage.getItem('token');

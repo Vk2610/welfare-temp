@@ -13,7 +13,6 @@ import HomePage from "./pages/common/HomePage";
 import UserProfile from "./pages/user/UserProfile";
 import WelfareForm from "./pages/user/WelfareForm";
 import TrackApplication from "./pages/user/TrackApplication";
-import UserHistory from "./pages/user/UserHistory";
 
 // sub-admin imports
 import SubAdminProfile from "./pages/sub-admin/SubAdminProfile";
@@ -25,6 +24,10 @@ import SubAdmHistory from "./pages/sub-admin/SubAdmHistory";
 import AdminProfile from "./pages/admin/AdminProfile";
 import ManageFunds from "./pages/admin/ManageFunds";
 import DataEntry from "./pages/admin/DataEntry";
+import FormApproval from "./pages/admin/FormApproval";
+import FormDetails from "./pages/admin/FormDetails";
+import History from "./pages/admin/History";
+import FormHistory from "./pages/admin/FormHistory";
 
 // Protected Route component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -51,6 +54,13 @@ const App = () => {
         <Route path="/resetPassword" element={<ResetPassword />} />z{" "}
         {/* Protected Routes */}
         {/* User Routes */}
+        <Route path="profile" element={<UserProfile />} />
+        <Route path="wf-form" element={<WelfareForm />} />
+        <Route path="track-application" element={<TrackApplication />} />
+        <Route path="history" element={<History />} />
+        <Route path="form-approval" element={<FormApproval />} />
+        <Route path="form-approval-details" element={<FormDetails />} />
+        <Route path="form-history" element={<FormHistory />} />
         <Route
           path="/user/*"
           element={
@@ -60,10 +70,6 @@ const App = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="profile" element={<UserProfile />} />
-          <Route path="wf-form" element={<WelfareForm />} />
-          <Route path="track-application" element={<TrackApplication />} />
-          <Route path="history" element={<UserHistory />} />
         </Route>
         {/* Sub-Admin Routes */}
         <Route
@@ -93,7 +99,8 @@ const App = () => {
           <Route path="data-entry" element={<DataEntry />} />
         </Route>
         {/* Default Route */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* <Route path="/" element={<Navigate to="/login" replace />} /> */}
+        <Route path="/" element={<HomePage />} />
         {/* Catch all - redirect to role-based home or login */}
         <Route
           path="*"
