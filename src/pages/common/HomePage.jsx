@@ -14,13 +14,13 @@ const HomePage = () => {
   useEffect(() => {
     // Get the role from localStorage
     const role = localStorage.getItem("role");
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
 
     // If no token, redirect to login
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    // if (!token) {
+    //   navigate("/login");
+    //   return;
+    // }
 
     // Set links based on role
     switch (role) {

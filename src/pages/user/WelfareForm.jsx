@@ -1,10 +1,36 @@
 // SevakWelfareForm.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import UploadFile from "../../components/UploadFile";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 export default function SevakWelfareForm() {
+
+
+  //     patient_name: "",
+  //     relationship_with_user: "",
+  //     type_of_disease VARCHAR(100),
+  //     diagnosis_tenant VARCHAR(255),
+  //     doctor_certificate ENUM('Yes', 'No') DEFAULT 'No',
+
+  //       medicine_exp DECIMAL(10, 2) DEFAULT 0.00,
+  //         doctor_bill DECIMAL(10, 2) DEFAULT 0.00,
+  //           other_exp DECIMAL(10, 2) DEFAULT 0.00,
+  //             total_exp DECIMAL(10, 2) GENERATED ALWAYS AS(medicine_exp + doctor_bill + other_exp) STORED,
+  //               no_of_bill INT DEFAULT 0,
+
+  //       req_fund_date DATE,
+  //         req_fund_amt DECIMAL(10, 2),
+  //           app_fund_amt DECIMAL(10, 2) DEFAULT 0,
+  //             form_status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+  //               is_fund_submitted ENUM('Yes', 'No') DEFAULT 'No',
+
+  //       req_fund_date DATE,
+  //       req_fund_amt DECIMAL(10,2),
+  //       form_status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
+  //       is_fund_submitted ENUM('Yes','No') DEFAULT 'No',
+
   const [form, setForm] = useState({
     applicantName: "",
     branchName: "",
@@ -107,6 +133,11 @@ export default function SevakWelfareForm() {
           formData.append(key, value || "");
         }
       });
+
+      console.log(form);
+      const token = localStorage.getItem("token");
+      const decoded = jwtDecode(token);
+      console.log(decoded);
 
       // Submit to backend (update URL as needed)
       // const response = await axios.post(

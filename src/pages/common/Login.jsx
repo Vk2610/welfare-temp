@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-// import rayatImage from "../assets/rayat-img.jpg";
 import { 
   Card,
   CardContent,

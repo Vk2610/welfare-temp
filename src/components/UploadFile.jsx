@@ -32,8 +32,8 @@ export default function UploadComponent({
     ".txt",
     ".zip",
   ],
-  onUpload,
-  userId
+  userId,
+  onUpload
 }) {
   const [documents, setDocuments] = useState([
     { id: 1, name: "discharge_certificate", file: null, isMandatory: true },
@@ -122,25 +122,24 @@ export default function UploadComponent({
     }));
 
     setAlert({ show: true, message: "Documents uploaded successfully!", severity: "success" });
-    // setTimeout(() => setAlert({ show: false, message: "", severity: "success" }), 3000);
+    setTimeout(() => setAlert({ show: false, message: "", severity: "success" }), 3000);
     onUpload(filesWithData);
 
     // try {
-    // const token = localStorage.getItem('token');
-    // const decoded = jwtDecode(token);
-    // const userId = decoded.id;
-    // const formId = uuidv4();
-    // const response = await axios.post('http://localhost:3000/user/upload-welfare-docs', {
-    //   userId: userId,
-    //   formId: formId,
-    //   docs: filesWithData
-    // });
-    // if (response.status == 200) {
-    //   setAlert({ show: true, message: "Documents uploaded and saved successfully!", severity: "success" });
-    // }
-    //  else {
-    //   setAlert({ show: true, message: "Failed to save documents", severity: "error" });
-    // }
+    //   const token = localStorage.getItem('token');
+    //   const decoded = jwtDecode(token);
+    //   const userId = decoded.id;
+    //   const formId = uuidv4();
+    //   const response = await axios.post('http://localhost:3000/user/upload-welfare-docs', {
+    //     userId: userId,
+    //     formId: formId,
+    //     docs: filesWithData
+    //   });
+    //   if (response.status == 200) {
+    //     setAlert({ show: true, message: "Documents uploaded and saved successfully!", severity: "success" });
+    //   } else {
+    //     setAlert({ show: true, message: "Failed to save documents", severity: "error" });
+    //   }
     // } catch (error) {
     //   console.log(`Failed uploading docs ${error}`);
     // }
