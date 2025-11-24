@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import UploadFile from "../../components/UploadFile";
+import { useNavigate } from "react-router-dom";
 
 export default function SevakWelfareForm() {
   const [form, setForm] = useState({
@@ -36,6 +37,7 @@ export default function SevakWelfareForm() {
 
   const [signaturePreview, setSignaturePreview] = useState(null);
   const [files, setFiles] = useState([]);
+  const navigate = useNavigate();
 
   const handleDocsUpload = (uploadedFiles) => {
     console.log("handleDocsUpload called");
@@ -149,6 +151,7 @@ export default function SevakWelfareForm() {
         applicantSignature: null,
       });
       setSignaturePreview(null);
+      navigate('wf-form');
     } catch (error) {
       // console.error("Error submitting form:", error);
       // alert("Error submitting form. Please try again.");

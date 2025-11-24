@@ -1,6 +1,6 @@
 import { FaUser, FaWpforms, FaMoneyCheckAlt, FaHome, FaUsers, FaSearchLocation } from "react-icons/fa";
 import { RiMoneyRupeeCircleLine } from "react-icons/ri";
-import { MdHistory, MdQueryStats} from "react-icons/md";
+import { MdHistory, MdQueryStats } from "react-icons/md";
 import { SiGoogleforms } from "react-icons/si";
 import { IoReceiptOutline } from "react-icons/io5"; // Import the icon you want to use
 import { GiReceiveMoney } from "react-icons/gi";
@@ -30,7 +30,7 @@ export const USER_LINKS = [
         key: "History",
         label: "History",
         Path: "/user/history",
-        icon :MdHistory
+        icon: MdHistory
     },
     // {
     //     key: "Transactions",
@@ -70,7 +70,7 @@ export const SUBADMIN_LINKS = [
         key: "History",
         label: "History",
         Path: "/sub-admin/history",
-        icon :MdHistory
+        icon: MdHistory
     },
 ];
 
@@ -80,6 +80,12 @@ export const ADMIN_LINKS = [
         label: "Profile",
         Path: "/admin/profile",
         icon: FaUser,
+    },
+    {
+        key: "Form",
+        label: "Welfare Form",
+        Path: "/admin/wf-form",
+        icon: FaWpforms, // Pass the icon as a component
     },
     {
         key: "ManageFunds",
