@@ -9,12 +9,25 @@ import {
     Stack,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { updateFormStatus } from "../services/form_services";
 
-export default function FormApprovalCard({ username, formDate, disease, patientName, requestedAmount, balanceUsed }) {
+export default function FormApprovalCard({ requestId, username, formDate, formStatus, disease, patientName, relation, requestedAmount }) {
 
     const navigate = useNavigate();
-    const handleApprove = () => alert("Approved");
-    const handleReject = () => alert("Rejected");
+
+    const handleApprove = async () => {
+        const res = await updateFormStatus('Approved', requestId);
+        if (res) navigate('/admin', {
+            replace: true
+        });
+    }
+
+    const handleReject = async () => {
+        await updateFormStatus('Rejected', requestId);
+        if (res) navigate('/admin', {
+            replace: true
+        });
+    }
 
     return (
         <Card sx={{ m: 3, borderRadius: 2, boxShadow: 3 }}>
@@ -76,6 +89,20 @@ export default function FormApprovalCard({ username, formDate, disease, patientN
                     {/* Divider after row 2 */}
                     <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
 
+                    <Grid item xs={12} sm={6}>
+                        <Stack spacing={1}>
+                            <Typography variant="subtitle2" color="text.secondary">
+                                Relation:
+                            </Typography>
+                            <Typography variant="h6" sx={{ fontSize: "1.15rem" }}>
+                                {relation}
+                            </Typography>
+                        </Stack>
+                    </Grid>
+
+                    {/* Divider after row 2 */}
+                    <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+
                     {/* Row 3 */}
                     <Grid item xs={12} sm={6}>
                         <Stack spacing={1}>
@@ -88,7 +115,6 @@ export default function FormApprovalCard({ username, formDate, disease, patientN
                         </Stack>
                     </Grid>
                 </Grid>
-
 
                 <Box mt={3} display="flex" justifyContent="flex-start" gap={2}>
                     <Button
@@ -109,7 +135,9 @@ export default function FormApprovalCard({ username, formDate, disease, patientN
                     </Button>
                     <Button
                         variant="contained"
-                        onClick={() => navigate("/form-approval-details")}
+                        onClick={() => navigate("/form-approval-details", {
+                            state: { username, formDate, disease, patientName, relation, requestedAmount }
+                        })}
                         sx={{ minWidth: 120, fontWeight: 700 }}
                     >
                         Show Details

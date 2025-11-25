@@ -1,32 +1,32 @@
-// SevakWelfareForm.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import UploadFile from "../../components/UploadFile";
 
 export default function SevakWelfareForm() {
+
   const [form, setForm] = useState({
+    hrmsNo: "",
     applicantName: "",
     branchName: "",
     joiningDate: "",
     designation: "",
     totalService: "",
     monthlySalary: "",
-    mobile: "",
+    mobileNo: "",
     patientName: "",
-    relation: "",
+    relation: "Self",
     illnessNature: "",
     illnessDuration: "",
-    medicineBill: "",
-    doctorBill: "",
-    otherExpenses: "",
-    totalExpenses: "",
-    certificatesAttached: "",
+    medicineBill: 0,
+    doctorBill: 0,
+    otherExpenses: 0,
+    totalExpenses: 0,
+    certificatesAttached: 0,
     sanctionLetter: "",
     previousHelp: "",
     previousHelpDetails: "",
     annualDeductions: "",
-    currentDeductionMonth: "",
-    requestedAmountNumbers: "",
+    requestedAmountNumbers: 0,
     requestedAmountWords: "",
     branchNameForDeposit: "",
     savingsAccountNo: "",
@@ -84,76 +84,76 @@ export default function SevakWelfareForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate required fields
-    if (!form.applicantName || !form.branchName || !form.mobile) {
+    // Basic required field validation
+    if (!form.applicantName || !form.branchName || !form.mobileNo) {
       alert("Please fill in all required fields (Name, Branch, Mobile)");
       return;
     }
 
-    if (files.length < 4) {
-      alert("Please upload required documents");
-      return;
-    }
-
     try {
-      // Prepare FormData for file upload
-      const formData = new FormData();
-      Object.entries(form).forEach(([key, value]) => {
-        if (key === "applicantSignature" && value) {
-          formData.append(key, value);
-        } else if (key !== "applicantSignature") {
-          formData.append(key, value || "");
-        }
-      });
+      // Convert signature file into base64 if available
+      // if (!form.applicantSignature) {
+      //   alert('Pleasee upload signature');
+      //   return;
+      // }
 
-      // Submit to backend (update URL as needed)
+      form.applicantSignature = "";
+      form.hrmsNo = "123456";
+      form.certificatesAttached = files.length;
+      form.formDate = Date.now().toString();
+
       const response = await axios.post(
-        "http://localhost:3000/api/submit-welfare-form",
+        "http://localhost:3000/user/submit-welfare-form",
         form,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
 
       alert("Form submitted successfully!");
       console.log("Response:", response.data);
 
-      // Reset form after successful submission
       setForm({
+        hrmsNo: "",
         applicantName: "",
         branchName: "",
         joiningDate: "",
         designation: "",
         totalService: "",
         monthlySalary: "",
-        mobile: "",
+        mobileNo: "",
         patientName: "",
-        relation: "",
+        relation: "Self",
         illnessNature: "",
         illnessDuration: "",
-        medicineBill: "",
-        doctorBill: "",
-        otherExpenses: "",
-        totalExpenses: "",
-        certificatesAttached: "",
+        medicineBill: 0,
+        doctorBill: 0,
+        otherExpenses: 0,
+        totalExpenses: 0,
+        certificatesAttached: 0,
         sanctionLetter: "",
         previousHelp: "",
         previousHelpDetails: "",
         annualDeductions: "",
-        currentDeductionMonth: "",
-        requestedAmountNumbers: "",
+        requestedAmountNumbers: 0,
         requestedAmountWords: "",
         branchNameForDeposit: "",
         savingsAccountNo: "",
         officerRecommendation: "",
         applicantSignature: null,
       });
+
+      setFiles([]);
       setSignaturePreview(null);
+
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Error submitting form. Please try again.");
+      alert("Server error. Please try again.");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-neutral-100 py-6 px-4 sm:px-6 lg:px-8">
@@ -313,8 +313,8 @@ export default function SevakWelfareForm() {
               <div className="w-1/2">मोबाईल नं.</div>
               <div className="w-1/2">
                 <input
-                  name="mobile"
-                  value={form.mobile}
+                  name="mobileNo"
+                  value={form.mobileNo}
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="________________________"
@@ -346,13 +346,20 @@ export default function SevakWelfareForm() {
             <div className="flex gap-3 items-start">
               <div className="w-1/3">सेवकाशी नाते</div>
               <div className="w-1/3">
-                <input
+                <select
                   name="relation"
                   value={form.relation}
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="________________"
-                />
+                >
+                  <option value="Self">Self</option>
+                  <option value="Spouse">Spouse</option>
+                  <option value="Son">Son</option>
+                  <option value="Daughter">Daughter</option>
+                  <option value="Mother">Mother</option>
+                  <option value="Father">Father</option>
+                </select>
               </div>
 
               <div className="w-1/3">
@@ -390,6 +397,7 @@ export default function SevakWelfareForm() {
                 <input
                   name="medicineBill"
                   value={form.medicineBill}
+                  type="number"
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
                   placeholder="____________________"
@@ -400,6 +408,7 @@ export default function SevakWelfareForm() {
               <div className="w-1/3">
                 <input
                   name="doctorBill"
+                  type="number"
                   value={form.doctorBill}
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
@@ -413,6 +422,7 @@ export default function SevakWelfareForm() {
               <div className="w-1/3">
                 <input
                   name="otherExpenses"
+                  type="number"
                   value={form.otherExpenses}
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
@@ -424,6 +434,7 @@ export default function SevakWelfareForm() {
               <div className="w-1/3">
                 <input
                   name="totalExpenses"
+                  type="number"
                   value={form.totalExpenses}
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base"
@@ -502,8 +513,11 @@ export default function SevakWelfareForm() {
                   value={form.annualDeductions}
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base bg-transparent"
-                  // placeholder="____________________________"
-                />
+                placeholder="____________________________"
+                >
+                  <option value="होय">होय</option>
+                  <option value="नाही">नाही</option>
+                </select>
               </div>
             </div>
 
@@ -514,6 +528,7 @@ export default function SevakWelfareForm() {
               <div className="w-2/3">
                 <input
                   name="requestedAmountNumbers"
+                  type="number"
                   value={form.requestedAmountNumbers}
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base mb-1"

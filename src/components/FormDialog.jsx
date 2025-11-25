@@ -8,10 +8,9 @@ import InputLabel from '@mui/material/InputLabel';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function FormDialog({ data, value }) {
+export default function FormDialog({ data, value, isDisabled }) {
   const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState('');
 
@@ -31,9 +30,11 @@ export default function FormDialog({ data, value }) {
     handleClose();
   };
 
+
+
   return (
     <React.Fragment>
-      <Button variant="contained" onClick={handleClickOpen}>
+      <Button variant="contained" onClick={handleClickOpen} disabled={isDisabled}>
         Edit {data.title}
       </Button>
       <Dialog open={open} onClose={handleClose}>
