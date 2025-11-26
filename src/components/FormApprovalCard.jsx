@@ -136,7 +136,7 @@ export default function FormApprovalCard({ requestId, username, formDate, formSt
                     <Button
                         variant="contained"
                         onClick={() => navigate("/form-approval-details", {
-                            state: { username, formDate, disease, patientName, relation, requestedAmount }
+                            state: { username, requestId, formDate, disease, patientName, relation, requestedAmount }
                         })}
                         sx={{ minWidth: 120, fontWeight: 700 }}
                     >

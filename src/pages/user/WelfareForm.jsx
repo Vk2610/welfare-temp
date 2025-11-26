@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import UploadFile from "../../components/UploadFile";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function SevakWelfareForm() {
 
@@ -34,13 +35,20 @@ export default function SevakWelfareForm() {
     applicantSignature: null,
   });
 
+  const [uploads, setUploads] = useState({
+    id: '',
+    isUploaded: false,
+    applicantSignature: '',
+    urls: {},
+    length: 0
+  });
   const [signaturePreview, setSignaturePreview] = useState(null);
-  const [files, setFiles] = useState([]);
+  // const [files, setFiles] = useState([]);
 
-  const handleDocsUpload = (uploadedFiles) => {
-    console.log("handleDocsUpload called");
-    setFiles(uploadedFiles);
-    console.log(uploadedFiles);
+  const handleDocsUpload = (upds) => {
+    console.log("handleDocsUpload called ");
+    if (!upds.isUploaded) return;
+    setUploads(upds);
   };
 
   const handleChange = (e) => {
@@ -84,27 +92,36 @@ export default function SevakWelfareForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic required field validation
     if (!form.applicantName || !form.branchName || !form.mobileNo) {
       alert("Please fill in all required fields (Name, Branch, Mobile)");
       return;
     }
 
     try {
-      // Convert signature file into base64 if available
-      // if (!form.applicantSignature) {
-      //   alert('Pleasee upload signature');
-      //   return;
-      // }
 
-      form.applicantSignature = "";
-      form.hrmsNo = "123456";
-      form.certificatesAttached = files.length;
-      form.formDate = Date.now().toString();
+      const today = new Date();
+
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0'); 
+      const yyyy = today.getFullYear();
+
+      const formattedDate = `${dd}/${mm}/${yyyy}`;
+
+      let formData = { ...form, ...uploads.urls };
+
+      form.formDate = formattedDate;
+      formData.applicantSignature = uploads.applicantSignature;
+      formData.hrmsNo = "123456";
+      formData.certificatesAttached = uploads.length;
+
+      formData.patientId = uuidv4();
+      formData.expensesId = uuidv4();
+      formData.requestId = uploads.id;
+      formData.previousId = uuidv4();
 
       const response = await axios.post(
         "http://localhost:3000/user/submit-welfare-form",
-        form,
+        formData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -145,7 +162,13 @@ export default function SevakWelfareForm() {
         applicantSignature: null,
       });
 
-      setFiles([]);
+      setUploads({
+        id: '',
+        isUploaded: false,
+        applicantSignature: '',
+        urls: {},
+        length: 0
+      });
       setSignaturePreview(null);
 
     } catch (error) {
@@ -513,7 +536,7 @@ export default function SevakWelfareForm() {
                   value={form.annualDeductions}
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base bg-transparent"
-                placeholder="____________________________"
+                  placeholder="____________________________"
                 >
                   <option value="होय">होय</option>
                   <option value="नाही">नाही</option>
@@ -621,7 +644,7 @@ export default function SevakWelfareForm() {
             </div>
           </div>
 
-          <UploadFile onUpload={handleDocsUpload} />
+          <UploadFile applicantSignature={form.applicantSignature} hrmsNo={'123456'} onUpload={handleDocsUpload} />
           {/* Print / Submit button */}
           <div className="flex justify-end gap-3">
             <button

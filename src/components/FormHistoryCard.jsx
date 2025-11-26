@@ -11,7 +11,7 @@ import FormDialog from "./FormDialog";
 
 function FormHistoryCard({ statusColor, data, handleUpdate }) {
     return (
-        <Box key={data.id} sx={{ display: "flex", mb: 5 }}>
+        <Box key={data.requestId} sx={{ display: "flex", mb: 5 }}>
 
             <Card
                 sx={{
@@ -119,15 +119,15 @@ function FormHistoryCard({ statusColor, data, handleUpdate }) {
                     <Box mt={2} display="flex" justifyContent="flex-start" gap={2}>
                         <FormDialog
                             handleUpdate={handleUpdate}
-                            data={{ title: "Status", type: "dropdown", options: ["Approved", "Rejected", "Pending"] }}
+                            data={{ requestId: data.requestId, title: "Status", type: "dropdown", options: ["Approved", "Rejected", "Pending"] }}
                             isDisabled={data.formStatus !== 'Pending'}
                         />
                         <FormDialog
                             data={{
+                                requestId: data.requestId,
                                 title: "Approved Amount",
                                 type: "number"
                             }}
-                            value={2000}
                             handleUpdate={handleUpdate}
                             isDisabled={data.formStatus !== 'Pending'}
                         />
