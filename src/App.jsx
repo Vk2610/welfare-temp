@@ -18,6 +18,7 @@ import History from "./pages/admin/History.jsx";
 import FormApproval from "./pages/admin/FormApproval.jsx";
 import FormDetails from "./pages/admin/FormDetails.jsx";
 import FormHistory from "./pages/admin/FormHistory.jsx";
+import SevakWelfareForm from "./pages/user/WelfareForm.jsx";
 
 // Protected Route component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -55,8 +56,7 @@ const App = () => {
           }
         >
           <Route path="profile" element={<UserProfile />} />
-          <Route path="wf-form" element={<WelfareForm />} />
-          {/* <Route path="wf-form" element={<SevakWelfarePage />} /> */}
+          <Route path="wf-form" element={<SevakWelfareForm />} />
         </Route>
         {/* Admin Routes */}
         <Route
@@ -68,9 +68,7 @@ const App = () => {
           }
         >
           {/* <Route path="wf-form" element={<SevakWelfarePage />} /> */}
-          <Route path="wf-form" element={<WelfareForm />} />
-          <Route path="profile" element={<AdminProfile />} />
-          <Route path="data-entry" element={<DataEntry />} />
+          <Route path="wf-form" element={<SevakWelfareForm />} />
           <Route path="history" element={<History />} />
           <Route path="form-approval" element={<FormApproval />} />
           <Route path="form-approval-details" element={<FormDetails />} />

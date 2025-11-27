@@ -11,35 +11,14 @@ export const USER_LINKS = [
         key: "Profile",
         label: "Profile",
         Path: "/user/profile",
-        // Path: "/profile",
         icon: FaUser, // Pass the icon as a component
     },
     {
         key: "Form",
         label: "Welfare Form",
         Path: "/user/wf-form",
-        // Path: "/wf-form",
         icon: FaWpforms, // Pass the icon as a component
     },
-    // {
-    //     key: "TrackApplication",
-    //     label: "Track Application",
-    //     Path: "/user/track-application",
-    //     icon: FaSearchLocation
-    //     , // Pass the icon as a component
-    // },
-    // {
-    //     key: "History",
-    //     label: "History",
-    //     Path: "/user/history",
-    //     icon :MdHistory
-    // },
-    // {
-    //     key: "Transactions",
-    //     label: "Transactions",
-    //     Path: "/user/transactions",
-    //     icon: RiMoneyRupeeCircleLine, // Pass the icon as a component
-    // },
 ];
 
 export const SUBADMIN_LINKS = [
@@ -49,13 +28,6 @@ export const SUBADMIN_LINKS = [
         Path: "/sub-admin/profile",
         icon: FaUser,
     },
-    // {
-    //     key: "ViewUsers",
-    //     label: "View Users",
-    //     Path: "/sub-admin/view-users",
-    //     icon: FaUsers,
-    // },
-    // Manage applications
     {
         key: "ManageApplications",
         label: "Manage Applications",
@@ -83,26 +55,18 @@ export const ADMIN_LINKS = [
         Path: "/admin/profile",
         icon: FaUser,
     },
-    // {
-    //     key: "Form",
-    //     label: "Welfare Form",
-    //     Path: "/admin/wf-form",
-    //     icon: FaWpforms, // Pass the icon as a component
-    // },
     {
         key: "FormApproval",
         label: "Form Approval",
-        // label: "Manage Funds",
         Path: "/admin/form-approval",
-        // Path: "/admin/manage-funds",
         icon: GiReceiveMoney,
     },
-    {
-        key: "Data Entry",
-        label: "Data Entry",
-        Path: "/admin/data-entry",
-        icon: LuFileSpreadsheet,
-    },
+    // {
+    //     key: "Data Entry",
+    //     label: "Data Entry",
+    //     Path: "/admin/data-entry",
+    //     icon: LuFileSpreadsheet,
+    // },
     {
         key: "History",
         label: "History",

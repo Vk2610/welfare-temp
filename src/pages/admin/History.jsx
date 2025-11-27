@@ -1,9 +1,6 @@
+
 import { useState } from 'react';
-<<<<<<< HEAD
-import { TextField, Box, Typography, Card, Button, Stack } from '@mui/material';
-=======
 import { TextField, Box, Typography, Card, Button, Stack, Pagination, CircularProgress } from '@mui/material';
->>>>>>> a1e9b67cd001f5e4e986d55b6e321d55fe078d86
 import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -11,11 +8,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 
 const History = () => {
-<<<<<<< HEAD
-
-=======
   const [isLoading, setLoading] = useState(true);
->>>>>>> a1e9b67cd001f5e4e986d55b6e321d55fe078d86
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
@@ -47,7 +40,7 @@ const History = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/admin/get-users", {
+      const res = await axios.get("http://localhost:5000/admin/get-users", {
         params: { page, limit, search: searchQuery }
       });
 
@@ -65,35 +58,6 @@ const History = () => {
   }, [searchQuery, page]);
 
   return (
-<<<<<<< HEAD
-    <Box sx={{ p: 3 }}>
-      <TextField
-        variant="outlined"
-        placeholder="Search User"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        fullWidth
-        sx={{ mb: 3 }}
-      />
-      {
-        [1, 2, 3, 4].map((_, index) => (
-          <Card key={index} sx={{ mt: 1.5, mb: 1.5, borderRadius: 2, boxShadow: 3, p: 2 }}>
-            <Stack spacing={1}>
-              <Typography variant="h6" color="text.primary">
-                Username: Badal Lad
-              </Typography>
-              <Typography variant="subtitle" color="text.secondary">
-                HMRS No: 123456
-              </Typography>
-              <Button sx={{ maxWidth: 200 }} variant="contained" onClick={() => navigate("/admin/form-history")}>
-                Click
-              </Button>
-            </Stack>
-          </Card>
-        ))
-      }
-    </Box>
-=======
     <>
       <Box sx={{ p: 3 }}>
         <Box display="flex" gap={1}>
@@ -165,7 +129,6 @@ const History = () => {
         />
       </Box>
     </>
->>>>>>> a1e9b67cd001f5e4e986d55b6e321d55fe078d86
   );
 };
 

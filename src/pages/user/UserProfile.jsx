@@ -137,7 +137,7 @@ const UserProfile = () => {
       const id = decoded.id;
 
       const response = await axios.put(
-        `http://localhost:3000/profile/${id}`,
+        `http://localhost:5000/profile/${id}`,
         user,
         {
           headers: { Authorization: `Bearer ${token}` },
