@@ -8,36 +8,59 @@ import InputLabel from '@mui/material/InputLabel';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import axios from "axios";
 
-export default function FormDialog({ data, value }) {
+export default function FormDialog({ data, isDisabled, handleUpdate }) {
   const [open, setOpen] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState('');
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson);
-    handleClose();
+    const value = formJson.text; 
+
+    console.log("SUBMITTED VALUE:", value);
+
+    try {
+      if (data.title === "Status") {
+        await axios.patch("http://localhost:3000/admin/update-form-status", {
+          id: data.requestId,
+          status: value
+        });
+        alert("Form status updated!");
+      }
+
+      else if (data.title === "Approved Amount") {
+        await axios.patch("http://localhost:3000/admin/update-appr-amt", {
+          id: data.requestId,
+          amt: value
+        });
+        alert("Approved amount updated!");
+      }
+
+      handleUpdate();
+      handleClose();
+    } catch (error) {
+      console.error("Error submitting update:", error);
+      alert("Something went wrong");
+    }
   };
 
   return (
-    <React.Fragment>
-      <Button variant="contained" onClick={handleClickOpen}>
+    <>
+      <Button variant="contained" onClick={handleClickOpen} disabled={isDisabled}>
         Edit {data.title}
       </Button>
+
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Edit {data.title}</DialogTitle>
+
         <DialogContent>
           <form onSubmit={handleSubmit} id="dialog-form">
             {data.type === 'dropdown' ? (
@@ -49,7 +72,7 @@ export default function FormDialog({ data, value }) {
                   onChange={(e) => setSelectedValue(e.target.value)}
                   label={data.title}
                 >
-                  {data.options && data.options.map((option, index) => (
+                  {data.options?.map((option, index) => (
                     <MenuItem key={index} value={option}>
                       {option}
                     </MenuItem>
@@ -61,7 +84,6 @@ export default function FormDialog({ data, value }) {
                 autoFocus
                 required
                 margin="dense"
-                id="name"
                 name="text"
                 type={data.type}
                 fullWidth
@@ -70,6 +92,7 @@ export default function FormDialog({ data, value }) {
             )}
           </form>
         </DialogContent>
+
         <DialogActions>
           <Button variant='contained' onClick={handleClose}>Cancel</Button>
           <Button variant='contained' color='success' type="submit" form="dialog-form">
@@ -77,6 +100,6 @@ export default function FormDialog({ data, value }) {
           </Button>
         </DialogActions>
       </Dialog>
-    </React.Fragment>
+    </>
   );
 }

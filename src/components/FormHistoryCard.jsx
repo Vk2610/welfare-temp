@@ -1,73 +1,137 @@
-import { Box, Card, CardContent, Divider, Typography } from '@mui/material';
-import React from 'react'
+import {
+    Box,
+    Typography,
+    Card,
+    CardContent,
+    Divider,
+    Grid,
+    Stack
+} from "@mui/material";
+import FormDialog from "./FormDialog";
 
-function FormHistoryCard({ getStatusColor, item, index }) {
+function FormHistoryCard({ statusColor, data, handleUpdate }) {
     return (
-        <Box key={item.id} sx={{ display: "flex", mb: 3 }}>
+        <Box key={data.requestId} sx={{ display: "flex", mb: 5 }}>
 
-            {/* Dot + Connector */}
-            <Box
-                sx={{
-                    width: "30px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    pt: 1,
-                }}
-            >
-                {/* Dot */}
-                <Box
-                    sx={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: "50%",
-                        bgcolor: getStatusColor(item.status),
-                    }}
-                />
-
-                {/* Connector Line */}
-                {index !== events.length - 1 && (
-                    <Box
-                        sx={{
-                            width: "2px",
-                            flex: 1,
-                            bgcolor: "rgba(0,0,0,0.2)",
-                            mt: 0.5,
-                        }}
-                    />
-                )}
-            </Box>
-
-            {/* Card Content */}
             <Card
                 sx={{
                     flex: 1,
                     borderRadius: 2,
                     boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                    borderLeft: "4px solid " + getStatusColor(item.status),
+                    borderLeft: "4px solid " + statusColor,
                 }}
             >
                 <CardContent>
-                    <Typography sx={{ fontSize: 16, fontWeight: 600 }}>
-                        {item.name}
-                    </Typography>
+                    <Grid container spacing={2} mb={1}>
+                        <Grid data xs={12} sm={6}>
+                            <Stack spacing={1}>
+                                <Typography variant="subtitle2" color="text.secondary">
+                                    Patient Name:
+                                </Typography>
+                                <Typography variant="h6" sx={{ fontSize: "1.15rem" }}>
+                                    {data.patientName}
+                                </Typography>
+                            </Stack>
+                        </Grid>
+
+                        <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+
+                        <Grid data xs={12} sm={6}>
+                            <Stack spacing={1}>
+                                <Typography variant="subtitle2" color="text.secondary">
+                                    Relation:
+                                </Typography>
+                                <Typography variant="h6" sx={{ fontSize: "1.15rem" }}>
+                                    {data.relation}
+                                </Typography>
+                            </Stack>
+                        </Grid>
+
+                        <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+                        <Grid data xs={12} sm={6}>
+                            <Stack spacing={1} alignItems="flex-start">
+                                <Typography variant="subtitle2" color="text.secondary">
+                                    Form Date:
+                                </Typography>
+                                <Typography variant="h6" sx={{ fontSize: "1.15rem" }}>
+                                    {data.formDate}
+                                </Typography>
+                            </Stack>
+                        </Grid>
+
+                        {/* Divider after row 1 */}
+                        <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+
+                        {/* Row 2 */}
+                        <Grid data xs={12} sm={6}>
+                            <Stack spacing={1}>
+                                <Typography variant="subtitle2" color="text.secondary">
+                                    Disease:
+                                </Typography>
+                                <Typography variant="h6" sx={{ fontSize: "1.15rem" }}>
+                                    {data.illnessNature}
+                                </Typography>
+                            </Stack>
+                        </Grid>
+
+                        {/* Divider after row 2 */}
+                        <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+
+                        {/* Row 3 */}
+                        <Grid data xs={12} sm={6}>
+                            <Stack spacing={1}>
+                                <Typography variant="subtitle2" color="text.secondary">
+                                    Requested Amount:
+                                </Typography>
+                                <Typography variant="h6" sx={{ fontSize: "1.15rem" }}>
+                                    {data.requestedAmountNumbers}
+                                </Typography>
+                            </Stack>
+                        </Grid>
+
+                        <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+
+                        <Grid data xs={12} sm={6}>
+                            <Stack spacing={1}>
+                                <Typography variant="subtitle2" color="text.secondary">
+                                    Approved Amount:
+                                </Typography>
+                                <Typography variant="h6" sx={{ fontSize: "1.15rem" }}>
+                                    {data.approvedAmount}
+                                </Typography>
+                            </Stack>
+                        </Grid>
+                    </Grid>
 
                     <Typography
                         sx={{
-                            fontSize: 14,
+                            fontSize: 16,
                             mt: 0.5,
-                            color: getStatusColor(item.status),
+                            color: statusColor,
                             fontWeight: 600,
                         }}
                     >
-                        {item.status}
+                        {data.formStatus}
                     </Typography>
 
                     <Divider sx={{ my: 1 }} />
 
-                    <Typography sx={{ fontSize: 12, color: "gray" }}>
-                        {item.date}
-                    </Typography>
+                    <Box mt={2} display="flex" justifyContent="flex-start" gap={2}>
+                        <FormDialog
+                            handleUpdate={handleUpdate}
+                            data={{ requestId: data.requestId, title: "Status", type: "dropdown", options: ["Approved", "Rejected", "Pending"] }}
+                            isDisabled={data.formStatus !== 'Pending'}
+                        />
+                        <FormDialog
+                            data={{
+                                requestId: data.requestId,
+                                title: "Approved Amount",
+                                type: "number"
+                            }}
+                            handleUpdate={handleUpdate}
+                            isDisabled={data.formStatus !== 'Pending'}
+                        />
+                    </Box>
                 </CardContent>
             </Card>
         </Box>
