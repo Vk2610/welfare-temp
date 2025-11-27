@@ -52,7 +52,7 @@ export default function Topbar({ toggleDrawer }) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Rayat Sevak Welfare Fund
+            Rayat Kutumb Kalyan Yojana
           </Typography>
           {auth && (
             <div>
