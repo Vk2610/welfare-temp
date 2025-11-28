@@ -30,7 +30,7 @@ export default function FormDetails() {
         const loadDocs = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get("http://localhost:5000/admin/get-docs", {
+                const res = await axios.get("http://localhost:3000/admin/get-docs", {
                     params: { requestId }
                 });
                 setDocs(res.data.docs || {});

@@ -99,7 +99,7 @@ const ResetPassword = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.put("http://localhost:5000/api/auth/reset-password", {
+      const response = await axios.put("http://localhost:3000/auth/reset-password", {
         Email_ID: formData.Email_ID,
         password: formData.password
       });

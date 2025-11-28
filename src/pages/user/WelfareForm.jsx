@@ -22,11 +22,11 @@ export default function SevakWelfareForm() {
     doctorBill: 0,
     otherExpenses: 0,
     totalExpenses: 0,
-    certificatesAttached: 0,
+    certificatesAttached: 'होय',
     sanctionLetter: "",
-    previousHelp: "",
+    previousHelp: "होय",
     previousHelpDetails: "",
-    annualDeductions: "",
+    annualDeductions: "होय",
     requestedAmountNumbers: 0,
     requestedAmountWords: "",
     branchNameForDeposit: "",
@@ -97,6 +97,11 @@ export default function SevakWelfareForm() {
       return;
     }
 
+    if (formData.certificatesAttached === 'नाही') {
+      alert('please upload documents and update the documents attached status');
+      return;
+    }
+
     try {
 
       const today = new Date();
@@ -112,7 +117,6 @@ export default function SevakWelfareForm() {
       form.formDate = formattedDate;
       formData.applicantSignature = uploads.applicantSignature;
       formData.hrmsNo = "123456";
-      formData.certificatesAttached = uploads.length;
 
       formData.patientId = uuidv4();
       formData.expensesId = uuidv4();
@@ -120,7 +124,7 @@ export default function SevakWelfareForm() {
       formData.previousId = uuidv4();
 
       const response = await axios.post(
-        "http://localhost:5000/user/submit-welfare-form",
+        "http://localhost:3000/user/submit-welfare-form",
         formData,
         {
           headers: {
@@ -149,11 +153,11 @@ export default function SevakWelfareForm() {
         doctorBill: 0,
         otherExpenses: 0,
         totalExpenses: 0,
-        certificatesAttached: 0,
+        certificatesAttached: 'होय',
         sanctionLetter: "",
-        previousHelp: "",
+        previousHelp: "होय",
         previousHelpDetails: "",
-        annualDeductions: "",
+        annualDeductions: "होय",
         requestedAmountNumbers: 0,
         requestedAmountWords: "",
         branchNameForDeposit: "",
@@ -488,7 +492,6 @@ export default function SevakWelfareForm() {
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base bg-transparent"
                 >
-                  <option value="">-- निवडा --</option>
                   <option value="होय">होय</option>
                   <option value="नाही">नाही</option>
                 </select>
@@ -506,7 +509,6 @@ export default function SevakWelfareForm() {
                   onChange={handleChange}
                   className="w-full border-b-2 border-gray-700 focus:outline-none py-1 text-base bg-transparent"
                 >
-                  <option value="">-- निवडा --</option>
                   <option value="होय">होय</option>
                   <option value="नाही">नाही</option>
                 </select>

@@ -25,10 +25,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-
+  // if (!token) {
+  //   return <Navigate to="/login" replace />;
+  // }
+  
   if (allowedRoles && !allowedRoles.includes(role)) {
     return <Navigate to={`/${role}`} replace />;
   }
@@ -44,6 +44,7 @@ const App = () => {
         {/* <Route path="wf-form" element={<SevakWelfarePage />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/resetPassword" element={<ResetPassword />} />z{" "}
+        <Route path="wf-form" element={<SevakWelfareForm />} />
         {/* Protected Routes */}
         {/* User Routes */}
         <Route

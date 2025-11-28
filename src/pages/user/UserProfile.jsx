@@ -11,8 +11,6 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import Container from "@mui/material/Container";
 import IconButton from "@mui/material/IconButton";
-import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 // Create a green theme
@@ -137,7 +135,7 @@ const UserProfile = () => {
       const id = decoded.id;
 
       const response = await axios.put(
-        `http://localhost:5000/profile/${id}`,
+        `http://localhost:3000/profile/update/${id}`,
         user,
         {
           headers: { Authorization: `Bearer ${token}` },

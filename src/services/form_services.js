@@ -6,7 +6,7 @@ export const updateFormStatus = async (status, id) => {
             status: status,
             id: id
         };
-        await axios.patch('http://localhost:5000/admin/update-form-status', payload);
+        await axios.patch('http://localhost:3000/admin/update-form-status', payload);
         alert(`Form Status changed to ${status}`);
         return true;
     } catch (error) {
@@ -22,7 +22,7 @@ export const updateApprovalAmount = async (amount, id) => {
             amt: amount,
             id: id
         };
-        await axios.patch('http://localhost:5000/admin/update-appr-amt', payload);
+        await axios.patch('http://localhost:3000/admin/update-appr-amt', payload);
         alert('Form approval amount updated successfully');
     } catch (error) {
         console.log('Error updating approval amount: ', error);

@@ -40,7 +40,7 @@ const History = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/admin/get-users", {
+      const res = await axios.get("http://localhost:3000/admin/get-users", {
         params: { page, limit, search: searchQuery }
       });
 

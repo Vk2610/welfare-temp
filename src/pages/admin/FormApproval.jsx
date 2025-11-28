@@ -12,7 +12,7 @@ function FormApproval() {
 
     const fetchForms = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/admin/get-all-forms", {
+            const response = await axios.get("http://localhost:3000/admin/get-all-forms", {
                 params: { page: page, limit: limit }
             });
 

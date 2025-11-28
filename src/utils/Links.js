@@ -11,13 +11,13 @@ export const USER_LINKS = [
         key: "Profile",
         label: "Profile",
         Path: "/user/profile",
-        icon: FaUser, // Pass the icon as a component
+        icon: FaUser, 
     },
     {
         key: "Form",
         label: "Welfare Form",
         Path: "/user/wf-form",
-        icon: FaWpforms, // Pass the icon as a component
+        icon: FaWpforms, 
     },
 ];
 
