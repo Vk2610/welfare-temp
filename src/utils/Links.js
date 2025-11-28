@@ -1,107 +1,121 @@
-import { FaUser, FaWpforms, FaMoneyCheckAlt, FaHome, FaUsers, FaSearchLocation } from "react-icons/fa";
-import { RiMoneyRupeeCircleLine } from "react-icons/ri";
-import { MdHistory, MdQueryStats} from "react-icons/md";
+import { FaUser, FaWpforms, FaSearchLocation } from "react-icons/fa";
+import { MdHistory, MdQueryStats } from "react-icons/md";
 import { SiGoogleforms } from "react-icons/si";
-import { IoReceiptOutline } from "react-icons/io5"; // Import the icon you want to use
 import { GiReceiveMoney } from "react-icons/gi";
 import { LuFileSpreadsheet, LuPlus, LuSettings } from "react-icons/lu";
 
-// export const USER_LINKS = [
-//     {
-//         key: "Profile",
-//         label: "Profile",
-//         Path: "/user/profile",
-//         icon: FaUser, // Pass the icon as a component
-//     },
-//     {
-//         key: "Form",
-//         label: "Welfare Form",
-//         Path: "/user/wf-form",
-//         icon: FaWpforms, // Pass the icon as a component
-//     },
-//     {
-//         key: "TrackApplication",
-//         label: "Track Application",
-//         Path: "/user/track-application",
-//         icon: FaSearchLocation
-//         , // Pass the icon as a component
-//     },
-//     {
-//         key: "History",
-//         label: "History",
-//         Path: "/user/history",
-//         icon :MdHistory
-//     },
-//     // {
-//     //     key: "Transactions",
-//     //     label: "Transactions",
-//     //     Path: "/user/transactions",
-//     //     icon: RiMoneyRupeeCircleLine, // Pass the icon as a component
-//     // },
-// ];
+// ---------------- USER LINKS ----------------
+export const USER_LINKS = [
+    {
+        key: "Profile",
+        label: "Profile",
+        Path: "/user/profile",
+        icon: FaUser,
+        formType: "common",
+    },
+    {
+        key: "Form",
+        label: "Welfare Form",
+        Path: "/user/wf-form",
+        icon: FaWpforms,
+        formType: "common",
+    },
+];
 
-// export const SUBADMIN_LINKS = [
-//     {
-//         key: "Profile",
-//         label: "Profile",
-//         Path: "/sub-admin/profile",
-//         icon: FaUser,
-//     },
-//     // {
-//     //     key: "ViewUsers",
-//     //     label: "View Users",
-//     //     Path: "/sub-admin/view-users",
-//     //     icon: FaUsers,
-//     // },
-//     // Manage applications
-//     {
-//         key: "ManageApplications",
-//         label: "Manage Applications",
-//         Path: "/sub-admin/manage-applications",
-//         icon: SiGoogleforms,
-//     },
-//     {
-//         key: "FundStats",
-//         label: "Fund Stats",
-//         Path: "/sub-admin/fund-stats",
-//         icon: MdQueryStats,
-//     },
-//     {
-//         key: "History",
-//         label: "History",
-//         Path: "/sub-admin/history",
-//         icon :MdHistory
-//     },
-// ];
+// ---------------- SUB-ADMIN LINKS ----------------
+export const SUBADMIN_LINKS = [
+    {
+        key: "Profile",
+        label: "Profile",
+        Path: "/sub-admin/profile",
+        icon: FaUser,
+        formType: "profile",
+    },
+    {
+        key: "ManageApplications",
+        label: "Manage Applications",
+        Path: "/sub-admin/manage-applications",
+        icon: SiGoogleforms,
+        formType: "manageApplications",
+    },
+    {
+        key: "FundStats",
+        label: "Fund Stats",
+        Path: "/sub-admin/fund-stats",
+        icon: MdQueryStats,
+        formType: "fundStats",
+    },
+    {
+        key: "History",
+        label: "History",
+        Path: "/sub-admin/history",
+        icon: MdHistory,
+        formType: "history",
+    },
+];
 
+// ---------------- ADMIN LINKS ----------------
 export const ADMIN_LINKS = [
     {
         key: "Profile",
         label: "Profile",
-        Path: "/admin/profile",
+        Path: "/admin/welfare-profile",
         icon: FaUser,
+        formType: "welfare",
     },
     {
-        key: "ManageFunds",
+        key: "Profile",
+        label: "Profile",
+        Path: "/admin/rkky-profile",
+        icon: FaUser,
+        formType: "rkky",
+    },
+    {
+        key: "Manage Funds",
         label: "Manage Funds",
         Path: "/admin/manage-funds",
-        icon: GiReceiveMoney,
+        icon: LuFileSpreadsheet,
+        formType: "rkky",
     },
+    {
+        key: "FormApproval",
+        label: "Form Approval",
+        Path: "/admin/form-approval",
+        icon: GiReceiveMoney,
+        formType: "welfare",
+    },
+    // {
+    //     key: "View Profile",
+    //     label: "View Profile",
+    //     Path: "/admin/view-profile",
+    //     icon: LuFileSpreadsheet,
+    //     formType: "rkky",
+    // },
     {
         key: "Add New User",
         label: "New User",
         Path: "/admin/new-user",
         icon: LuPlus,
+        formType: "rkky",
     },
     {
         key: "Update User",
         label: "Update User",
         Path: "/admin/update-user",
         icon: LuSettings,
+        formType: "rkky",
     },
+    {
+        key: "History",
+        label: "History",
+        Path: "/admin/history",
+        icon: MdHistory,
+        formType: "welfare",
+    }
 ];
 
+// ---------------- LOGOUT HANDLER ----------------
 export const handleLogout = () => {
-    localStorage.clear(); // Clear all localStorage items (token, role, etc)
-    window.location.href = '/login'; // Redirect to login page
+    localStorage.removeItem('token');
+    window.location.href = '/login';
 };

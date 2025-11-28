@@ -1,178 +1,3 @@
-// import React, { useState, useEffect } from "react";
-// import {
-//   Box,
-//   Typography,
-//   Card,
-//   CardContent,
-//   TextField,
-//   Table,
-//   TableHead,
-//   TableBody,
-//   TableRow,
-//   TableCell,
-//   TableContainer,
-//   TablePagination,
-//   Button,
-//   IconButton
-// } from "@mui/material";
-// import { FaSearch } from "react-icons/fa";
-// import { useNavigate } from "react-router-dom";
-
-// const ManageFunds = () => {
-//   const navigate = useNavigate();
-
-//   // Sample Users — later you can fetch from backend
-//   const sampleUsers = [
-//     { hrmsNo: "101", name: "Amit Sharma", department: "IT", status: "Active" },
-//     { hrmsNo: "102", name: "Rohit Verma", department: "Accounts", status: "Retired" },
-//     { hrmsNo: "103", name: "Sneha Patil", department: "HR", status: "Active" },
-//     { hrmsNo: "104", name: "Meera Singh", department: "Library", status: "Active" },
-//     { hrmsNo: "105", name: "Suresh Kumar", department: "Sports", status: "Active" },
-//     { hrmsNo: "106", name: "Amit Sharma", department: "IT", status: "Active" },
-//     { hrmsNo: "107", name: "Rohit Verma", department: "Accounts", status: "Retired" },
-//     { hrmsNo: "108", name: "Sneha Patil", department: "HR", status: "Active" },
-//     { hrmsNo: "109", name: "Meera Singh", department: "Library", status: "Active" },
-//     { hrmsNo: "110", name: "Suresh Kumar", department: "Sports", status: "Active" },
-//     { hrmsNo: "111", name: "Amit Sharma", department: "IT", status: "Active" },
-//     { hrmsNo: "112", name: "Rohit Verma", department: "Accounts", status: "Retired" },
-//     { hrmsNo: "113", name: "Sneha Patil", department: "HR", status: "Active" },
-//     { hrmsNo: "114", name: "Meera Singh", department: "Library", status: "Active" },
-//     { hrmsNo: "115", name: "Suresh Kumar", department: "Sports", status: "Active" },
-//     { hrmsNo: "116", name: "Amit Sharma", department: "IT", status: "Active" },
-//     { hrmsNo: "117", name: "Rohit Verma", department: "Accounts", status: "Retired" },
-//     { hrmsNo: "118", name: "Sneha Patil", department: "HR", status: "Active" },
-//     { hrmsNo: "119", name: "Meera Singh", department: "Library", status: "Active" },
-//     { hrmsNo: "120", name: "Suresh Kumar", department: "Sports", status: "Active" },
-//     { hrmsNo: "121", name: "Amit Sharma", department: "IT", status: "Active" },
-//     { hrmsNo: "122", name: "Rohit Verma", department: "Accounts", status: "Retired" },
-//     { hrmsNo: "123", name: "Sneha Patil", department: "HR", status: "Active" },
-//     { hrmsNo: "134", name: "Meera Singh", department: "Library", status: "Active" },
-//     { hrmsNo: "125", name: "Suresh Kumar", department: "Sports", status: "Active" },
-//     { hrmsNo: "121", name: "Amit Sharma", department: "IT", status: "Active" },
-//     { hrmsNo: "122", name: "Rohit Verma", department: "Accounts", status: "Retired" },
-//     { hrmsNo: "123", name: "Sneha Patil", department: "HR", status: "Active" },
-//     { hrmsNo: "124", name: "Meera Singh", department: "Library", status: "Active" },
-//     { hrmsNo: "125", name: "Suresh Kumar", department: "Sports", status: "Active" },
-//   ];
-
-//   const [users, setUsers] = useState(sampleUsers);
-//   const [search, setSearch] = useState("");
-
-//   // Pagination states
-//   const [rowsPerPage, setRowsPerPage] = useState(10);
-//   const [page, setPage] = useState(0);
-
-//   // Search Filter
-//   const filteredUsers = users.filter(
-//     (u) =>
-//       u.name.toLowerCase().includes(search.toLowerCase()) ||
-//       u.hrmsNo.includes(search)
-//   );
-
-//   return (
-//     <Box sx={{ p: 4 }}>
-//       {/* Title */}
-//       <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 ,
-//           maxWidth: 1000,
-//           mx: "auto"
-//       }}>
-//         Manage Funds
-//       </Typography>
-
-//       <Card sx={{ p: 3, borderRadius: 3, boxShadow: 4,
-//           maxWidth: 1000,
-//           mx: "auto"
-//        }}>
-//         <CardContent>
-
-//           {/* Search Bar */}
-//           <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
-//             <TextField
-//               fullWidth
-//               label="Search by Name or HRMS No"
-//               value={search}
-//               onChange={(e) => setSearch(e.target.value)}
-//             />
-//             <IconButton sx={{ background: "#16a34a", color: "white" }}>
-//               <FaSearch />
-//             </IconButton>
-//           </Box>
-
-//           {/* Users Table */}
-//           <TableContainer>
-//             <Table>
-//               <TableHead>
-//                 <TableRow sx={{ background: "#f3f4f6" }}>
-//                   <TableCell><b>HRMS No</b></TableCell>
-//                   <TableCell><b>Name</b></TableCell>
-//                   <TableCell><b>Department</b></TableCell>
-//                   <TableCell><b>Status</b></TableCell>
-//                   <TableCell><b>Actions</b></TableCell>
-//                 </TableRow>
-//               </TableHead>
-
-//               <TableBody>
-//                 {filteredUsers
-//                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-//                   .map((user) => (
-//                     <TableRow key={user.hrmsNo}>
-//                       <TableCell>{user.hrmsNo}</TableCell>
-//                       <TableCell>{user.name}</TableCell>
-//                       <TableCell>{user.department}</TableCell>
-//                       <TableCell>{user.status}</TableCell>
-
-//                       <TableCell>
-//                         <Button
-//                           variant="contained"
-//                           sx={{
-//                             background: "#2563eb",
-//                             "&:hover": { background: "#1d4ed8" },
-//                           }}
-//                           onClick={() => navigate(`/admin/view/${user.hrmsNo}`)}
-//                         >
-//                           View Profile
-//                         </Button>
-//                       </TableCell>
-//                     </TableRow>
-//                   ))}
-
-//                 {filteredUsers.length === 0 && (
-//                   <TableRow>
-//                     <TableCell colSpan={5} align="center">
-//                       No users found
-//                     </TableCell>
-//                   </TableRow>
-//                 )}
-//               </TableBody>
-//             </Table>
-//           </TableContainer>
-
-//           {/* Pagination */}
-//           <TablePagination
-//             component="div"
-//             count={filteredUsers.length}
-//             rowsPerPage={rowsPerPage}
-//             page={page}
-//             onPageChange={(e, newPage) => setPage(newPage)}
-//             onRowsPerPageChange={(e) => {
-//               setRowsPerPage(parseInt(e.target.value));
-//               setPage(0);
-//             }}
-//             rowsPerPageOptions={[10, 25, 50]}
-//           />
-
-//         </CardContent>
-//       </Card>
-//     </Box>
-//   );
-// };
-
-// export default ManageFunds;
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -214,20 +39,26 @@ const ManageFunds = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/employees");
+        const res = await axios.get("http://localhost:3000/employees/get-all-emp");
 
-        // 🔹 Process users after fetching
-        const processed = res.data.map((u) => {
+        console.log("API RESPONSE:", res.data);
+
+        // Extract array safely
+        const data =
+          Array.isArray(res.data)
+            ? res.data
+            : res.data?.employees ||
+            res.data?.users ||
+            res.data?.data ||
+            [];
+
+        const processed = data.map((u) => {
           const retirement = dayjs(u.retirementDate);
           const today = dayjs();
 
           return {
             ...u,
-            // Convert date → DD/MM/YYYY
             retirementDateFormatted: retirement.format("DD/MM/YYYY"),
-
-            // If retirementDate is FUTURE → Active
-            // If retirementDate is PAST or TODAY → Retired
             status: retirement.isAfter(today) ? "Active" : "Retired",
           };
         });
@@ -243,6 +74,7 @@ const ManageFunds = () => {
     fetchUsers();
   }, []);
 
+
   // -------------------------------
   // 🔹 Retiring in 60 Days Logic
   // -------------------------------
@@ -257,15 +89,26 @@ const ManageFunds = () => {
   // -------------------------------
   const filteredUsers = users.filter((u) => {
     const matchesSearch =
-      u.employeeName.toLowerCase().includes(search.toLowerCase()) ||
+      (u.employeeName || "")
+        .toLowerCase()
+        .includes(search.toLowerCase()) ||
       u.hrmsNo.includes(search);
 
     if (filterType === "all") return matchesSearch;
-    if (filterType === "retiring") return matchesSearch && retiringIn60(u.retirementDate);
-    if (filterType === "claimed") return matchesSearch && u.claimedFullAmount;
+
+    if (filterType === "retiring")
+      return matchesSearch && retiringIn60(u.retirementDate);
+
+    if (filterType === "claimed")
+      return matchesSearch && u.claimedFullAmount === 1;
+
+    // ✅ Remaining people (NOT claimed full amount)
+    if (filterType === "lowInstallment")
+      return matchesSearch && u.claimedFullAmount === 0;
 
     return matchesSearch;
   });
+
 
   if (loading) {
     return (
@@ -279,12 +122,12 @@ const ManageFunds = () => {
     <Box sx={{ p: 4 }}>
       <Typography
         variant="h4"
-        sx={{ mb: 3, fontWeight: 600, maxWidth: 1000, mx: "auto" }}
+        sx={{ mb: 3, fontWeight: 600, maxWidth: 1300, mx: "auto" }}
       >
         Manage Funds
       </Typography>
 
-      <Card sx={{ p: 3, borderRadius: 3, boxShadow: 4, maxWidth: 1000, mx: "auto" }}>
+      <Card sx={{ p: 3, borderRadius: 3, boxShadow: 4, maxWidth: 1300, mx: "auto" }}>
         <CardContent>
 
           {/* 🔹 TOP FILTER BUTTONS */}
@@ -297,7 +140,9 @@ const ManageFunds = () => {
             <ToggleButton value="all">All Users</ToggleButton>
             <ToggleButton value="retiring">Retiring in 60 Days</ToggleButton>
             <ToggleButton value="claimed">Claimed All Benefits</ToggleButton>
+            <ToggleButton value="lowInstallment">Paid &lt; ₹5000</ToggleButton>
           </ToggleButtonGroup>
+
 
           {/* 🔹 SEARCH BAR */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
@@ -348,9 +193,7 @@ const ManageFunds = () => {
                             "&:hover": { background: "#1d4ed8" },
                           }}
                           onClick={() =>
-                            navigate(`/admin/view/${user.hrmsNo}`, {
-                              state: { user }
-                            })
+                            navigate(`/admin/view-profile`, { state: { user } })
                           }
                         >
                           View Profile

@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,13 +24,13 @@ export default function Admin() {
         <Route path="/resetPassword" element={<ResetPassword />} />
 
         {/* Admin Routes (no protection) */}
-        <Route path="/admin" element={<HomePage />}>
+        <Route path="/admin/*" element={<HomePage />}>
           <Route index element={<HomePage />} />
           <Route path="profile" element={<AdminProfile />} />
           <Route path="manage-funds" element={<ManageFunds />} />
           <Route path="new-user" element={<NewUser />} />
           <Route path="update-user" element={<UpdateUser />} />
-          <Route path="view/:id" element={<ViewProfile />} />
+          <Route path="manage-funds/view" element={<ViewProfile />} />
         </Route>
 
         {/* Default Route */}

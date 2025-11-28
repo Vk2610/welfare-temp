@@ -13,6 +13,7 @@ import { handleLogout } from "../utils/Links";
 export default function Sidebar({ open = false, toggleDrawer, links = [] }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const formType = localStorage.getItem('formType');
 
   const DrawerList = (
     <Box
@@ -30,54 +31,56 @@ export default function Sidebar({ open = false, toggleDrawer, links = [] }) {
       <List sx={{ pt: 1 }}>
         {links.map((item) => {
           const Icon = item.icon;
-          return (
-            <ListItem key={item.key} disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  navigate(item.Path);
-                  toggleDrawer();
-                }}
-                selected={location.pathname === item.Path}
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "rgba(7, 170, 23, 0.08)",
-                  },
-                  "&.Mui-selected": {
-                    backgroundColor: "rgba(7, 170, 23, 0.12)",
+          if (item.formType === 'common' || item.formType === formType) {
+            return (
+              <ListItem key={item.key} disablePadding>
+                <ListItemButton
+                  onClick={() => {
+                    navigate(item.Path);
+                    toggleDrawer();
+                  }}
+                  selected={location.pathname === item.Path}
+                  sx={{
                     "&:hover": {
-                      backgroundColor: "rgba(7, 170, 23, 0.16)",
+                      backgroundColor: "rgba(7, 170, 23, 0.08)",
                     },
-                  },
-                  borderRadius: 1,
-                  mx: 1,
-                  width: "calc(100% - 16px)",
-                }}
-              >
-                <ListItemIcon>
-                  <Icon
-                    style={{
-                      color:
-                        location.pathname === item.Path
-                          ? "rgb(7, 170, 23)"
-                          : "rgba(7, 170, 23, 0.7)",
+                    "&.Mui-selected": {
+                      backgroundColor: "rgba(7, 170, 23, 0.12)",
+                      "&:hover": {
+                        backgroundColor: "rgba(7, 170, 23, 0.16)",
+                      },
+                    },
+                    borderRadius: 1,
+                    mx: 1,
+                    width: "calc(100% - 16px)",
+                  }}
+                >
+                  <ListItemIcon>
+                    <Icon
+                      style={{
+                        color:
+                          location.pathname === item.Path
+                            ? "rgb(7, 170, 23)"
+                            : "rgba(7, 170, 23, 0.7)",
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.label}
+                    sx={{
+                      "& .MuiListItemText-primary": {
+                        fontWeight: location.pathname === item.Path ? 600 : 500,
+                        color:
+                          location.pathname === item.Path
+                            ? "rgb(7, 170, 23)"
+                            : "rgb(51, 51, 51)",
+                      },
                     }}
                   />
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.label}
-                  sx={{
-                    "& .MuiListItemText-primary": {
-                      fontWeight: location.pathname === item.Path ? 600 : 500,
-                      color:
-                        location.pathname === item.Path
-                          ? "rgb(7, 170, 23)"
-                          : "rgb(51, 51, 51)",
-                    },
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          );
+                </ListItemButton>
+              </ListItem>
+            );
+          }
         })}
       </List>
 

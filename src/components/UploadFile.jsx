@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -8,7 +8,6 @@ import {
   Chip,
   IconButton,
   Alert,
-  Grid,
   Paper
 } from "@mui/material";
 import {
@@ -20,132 +19,147 @@ import {
 } from "@mui/icons-material";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
-import { jwtDecode } from "jwt-decode";
 
 export default function UploadComponent({
   maxFileSizeMB = 10,
-  accept = [
-    "image/*",
-    ".pdf",
-    ".doc",
-    ".docx",
-    ".txt",
-    ".zip",
-  ],
-  onUpload,
-  userId
+  accept = ["image/jpeg", "image/png", "image/jpg"],
+  applicantSignature,
+  hrmsNo,
+  onUpload
 }) {
+
   const [documents, setDocuments] = useState([
-    { id: 1, name: "discharge_certificate", file: null, isMandatory: true },
-    { id: 2, name: "doctor_prescription", file: null, isMandatory: true },
-    { id: 3, name: "medicine_bills", file: null, isMandatory: true },
-    { id: 4, name: "diagnostic_reports", file: null, isMandatory: true },
+    { id: 1, name: "dischargeCertificate", file: null, isMandatory: true },
+    { id: 2, name: "doctorPrescription", file: null, isMandatory: true },
+    { id: 3, name: "medicineBills", file: null, isMandatory: true },
+    { id: 4, name: "diagnosticReports", file: null, isMandatory: true },
   ]);
+
   const [dynamicRows, setDynamicRows] = useState([]);
   const [alert, setAlert] = useState({ show: false, message: "", severity: "error" });
 
+  const showAlert = (message, severity = "error") => {
+    setAlert({ show: true, message, severity });
+    setTimeout(() => setAlert({ show: false, message: "", severity: "error" }), 3000);
+  };
+
+  // ------------------------ VALIDATION --------------------------
   const handleFileUpload = (docId, event) => {
     const file = event.target.files[0];
     if (!file) return;
 
     // Validate file size
-    const maxBytes = maxFileSizeMB * 1024 * 1024;
-    if (file.size > maxBytes) {
-      setAlert({ show: true, message: `File is larger than ${maxFileSizeMB} MB`, severity: "error" });
-      setTimeout(() => setAlert({ show: false, message: "", severity: "error" }), 3000);
+    if (file.size > maxFileSizeMB * 1024 * 1024) {
+      showAlert(`File is larger than ${maxFileSizeMB} MB`);
       return;
     }
 
-    // Validate file type
-    const lower = file.name.toLowerCase();
-    const isAcceptable = accept.some((a) => {
-      if (a.endsWith("/*")) {
-        const prefix = a.replace("/*", "");
-        return file.type.startsWith(prefix);
-      }
-      return lower.endsWith(a.toLowerCase()) || file.type === a;
-    });
-
-    if (!isAcceptable) {
-      setAlert({ show: true, message: "File type is not accepted", severity: "error" });
-      setTimeout(() => setAlert({ show: false, message: "", severity: "error" }), 3000);
+    // Validate image type
+    if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
+      showAlert("Only JPG, JPEG, PNG files are allowed");
       return;
     }
 
-    // Update document with file
-    setDocuments(prev => 
-      prev.map(doc => 
-        doc.id === docId ? { ...doc, file: file } : doc
-      )
+    // update state
+    setDocuments(prev =>
+      prev.map(doc => (doc.id === docId ? { ...doc, file } : doc))
     );
 
-    setDynamicRows(prev => 
-      prev.map(row => 
-        row.id === docId ? { ...row, file: file } : row
-      )
+    setDynamicRows(prev =>
+      prev.map(row => (row.id === docId ? { ...row, file } : row))
     );
   };
 
+  // ------------------------ ADD/REMOVE ROWS --------------------------
   const addDynamicRow = () => {
-    if (dynamicRows.length >= 6) {
-      setAlert({ show: true, message: "Maximum 10 additional documents allowed", severity: "warning" });
-      setTimeout(() => setAlert({ show: false, message: "", severity: "warning" }), 3000);
+    if (dynamicRows.length >= 5) {
+      showAlert("Maximum 5 additional documents allowed", "warning");
       return;
     }
-    const newId = Math.max(...documents.map(d => d.id), ...dynamicRows.map(d => d.id)) + 1;
-    setDynamicRows(prev => [...prev, { id: newId, name: `Document ${dynamicRows.length + 1}`, file: null, isMandatory: false }]);
+
+    const newId = Math.max(...documents.map(d => d.id), ...dynamicRows.map(d => d.id), 0) + 1;
+
+    setDynamicRows(prev => [
+      ...prev,
+      { id: newId, name: `Document ${dynamicRows.length + 1}`, file: null, isMandatory: false }
+    ]);
   };
 
   const removeDynamicRow = (id) => {
     setDynamicRows(prev => prev.filter(row => row.id !== id));
   };
 
-  const handleSubmit = async () => {
+  // ------------------------ CLOUDINARY UPLOAD --------------------------
+  const CLOUD_NAME = "dcnzddzni";
+  const UPLOAD_PRESET = "welfare_uploads";
+  const CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
-    let isRequiredUploaded = false;
-    documents.forEach(doc => {
-      if (doc.isMandatory && !doc.file) {
-        setAlert({ show: true, message: `Please upload ${doc.name}`, severity: "warning" });
-        setTimeout(() => setAlert({ show: false, message: "", severity: "warning" }), 3000);
-        return;
-      }
-      isRequiredUploaded = true;
-    });
+  const uploadToCloudinary = async (file, folderPath, publicId) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", UPLOAD_PRESET);
+    fd.append("folder", folderPath);
+    fd.append("public_id", publicId);
 
-    if (!isRequiredUploaded) return;
-
-    const allDocuments = [...documents, ...dynamicRows];
-    const filesWithData = allDocuments.filter(doc => doc.file).map(doc => ({
-      name: doc.name,
-      file: doc.file,
-      uploaded: true
-    }));
-
-    setAlert({ show: true, message: "Documents uploaded successfully!", severity: "success" });
-    // setTimeout(() => setAlert({ show: false, message: "", severity: "success" }), 3000);
-    onUpload(filesWithData);
-
-    // try {
-    // const token = localStorage.getItem('token');
-    // const decoded = jwtDecode(token);
-    // const userId = decoded.id;
-    // const formId = uuidv4();
-    // const response = await axios.post('http://localhost:3000/user/upload-welfare-docs', {
-    //   userId: userId,
-    //   formId: formId,
-    //   docs: filesWithData
-    // });
-    // if (response.status == 200) {
-    //   setAlert({ show: true, message: "Documents uploaded and saved successfully!", severity: "success" });
-    // }
-    //  else {
-    //   setAlert({ show: true, message: "Failed to save documents", severity: "error" });
-    // }
-    // } catch (error) {
-    //   console.log(`Failed uploading docs ${error}`);
-    // }
+    const res = await axios.post(CLOUD_URL, fd);
+    return res.data.secure_url;
   };
 
+  // ------------------------ FORM SUBMIT --------------------------
+  const handleSubmit = async () => {
+    // ensure mandatory docs
+    for (let doc of documents) {
+      if (doc.isMandatory && !doc.file) {
+        showAlert(`Please upload ${doc.name}`, "warning");
+        return;
+      }
+    }
+
+    if (!applicantSignature) {
+      showAlert("Please upload applicant signature", "warning");
+      return;
+    }
+
+    const id = uuidv4();
+    let urls = {};
+
+    const allDocs = [...documents, ...dynamicRows].filter(doc => doc.file);
+
+    try {
+      // upload signature
+      const signPath = `welfare_uploads/${hrmsNo}/${id}`;
+      const applicantSignatureUrl = await uploadToCloudinary(
+        applicantSignature,
+        signPath,
+        "applicantSignature"
+      );
+
+      // upload other docs
+      for (let doc of allDocs) {
+        const path = `welfare_uploads/${hrmsNo}/${id}`;
+        const publicId = doc.name.replace(/\s+/g, "_");
+
+        const url = await uploadToCloudinary(doc.file, path, publicId);
+        urls[doc.name] = url;
+      }
+
+      showAlert("Uploaded Successfully!", "success");
+
+      onUpload({
+        id,
+        isUploaded: true,
+        applicantSignature: applicantSignatureUrl,
+        urls,
+        length: allDocs.length
+      });
+
+    } catch (error) {
+      console.error("Upload failed:", error);
+      showAlert("Upload failed!", "error");
+    }
+  };
+
+  // ------------------------ UI COMPONENT --------------------------
   const DocumentCard = ({ doc, onFileUpload, onRemove }) => (
     <Card sx={{ mb: 2, boxShadow: 2, borderRadius: 2 }}>
       <CardContent>
@@ -153,23 +167,16 @@ export default function UploadComponent({
           <Box display="flex" alignItems="center" gap={2}>
             <DescriptionIcon color="primary" />
             <Box>
-              <Typography variant="h6" component="h3">
-                {doc.name}
-                {doc.isMandatory && (
-                  <Chip 
-                    label="Required" 
-                    color="error" 
-                    size="small" 
-                    sx={{ ml: 1, height: 20 }}
-                  />
-                )}
-              </Typography>
+              <Typography variant="h6">{doc.name}</Typography>
+              {doc.isMandatory && (
+                <Chip label="Required" color="error" size="small" sx={{ ml: 1 }} />
+              )}
               <Typography variant="body2" color="text.secondary">
-                Max size: {maxFileSizeMB}MB
+                Allowed: JPG, JPEG, PNG
               </Typography>
             </Box>
           </Box>
-          
+
           <Box display="flex" alignItems="center" gap={2}>
             {doc.file ? (
               <Chip
@@ -179,28 +186,19 @@ export default function UploadComponent({
                 variant="outlined"
               />
             ) : (
-              <Button
-                variant="contained"
-                component="label"
-                startIcon={<UploadIcon />}
-                size="small"
-              >
+              <Button variant="contained" component="label" startIcon={<UploadIcon />}>
                 Upload
                 <input
                   type="file"
-                  accept={accept.join(",")}
+                  accept="image/jpeg,image/png,image/jpg"
                   onChange={(e) => onFileUpload(doc.id, e)}
                   hidden
                 />
               </Button>
             )}
-            
-            {!doc.isMandatory && onRemove && (
-              <IconButton 
-                onClick={onRemove} 
-                color="error" 
-                size="small"
-              >
+
+            {!doc.isMandatory && (
+              <IconButton color="error" size="small" onClick={onRemove}>
                 <DeleteIcon />
               </IconButton>
             )}
@@ -210,28 +208,21 @@ export default function UploadComponent({
     </Card>
   );
 
+  // ------------------------ RENDER --------------------------
   return (
     <Box sx={{ maxWidth: 800, margin: "0 auto", p: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        Document Upload
-      </Typography>
-      
+      <Typography variant="h4" align="center">Document Upload</Typography>
+
       {alert.show && (
-        <Alert 
-          severity={alert.severity} 
-          sx={{ mb: 3 }}
-          onClose={() => setAlert({ show: false, message: "", severity: "error" })}
-        >
+        <Alert severity={alert.severity} sx={{ mb: 2 }}>
           {alert.message}
         </Alert>
       )}
 
-      <Paper elevation={3} sx={{ p: 3, borderRadius: 3, backgroundColor: "#f8f9fa" }}>
-        <Typography variant="h6" gutterBottom color="primary">
-          Required Documents
-        </Typography>
-        
-        {documents.map((doc) => (
+      <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
+        <Typography variant="h6" color="primary">Required Documents</Typography>
+
+        {documents.map(doc => (
           <DocumentCard
             key={doc.id}
             doc={doc}
@@ -241,10 +232,11 @@ export default function UploadComponent({
 
         {dynamicRows.length > 0 && (
           <>
-            <Typography variant="h6" gutterBottom color="primary" sx={{ mt: 3 }}>
+            <Typography variant="h6" color="primary" sx={{ mt: 3 }}>
               Additional Documents
             </Typography>
-            {dynamicRows.map((doc) => (
+
+            {dynamicRows.map(doc => (
               <DocumentCard
                 key={doc.id}
                 doc={doc}
@@ -255,23 +247,12 @@ export default function UploadComponent({
           </>
         )}
 
-        <Box display="flex" justifyContent="center" gap={2} mt={4}>
-          <Button
-            variant="outlined"
-            startIcon={<AddIcon />}
-            onClick={addDynamicRow}
-            disabled={dynamicRows.length >= 6}
-            sx={{ borderRadius: 2 }}
-          >
-            Add Document ({dynamicRows.length}/6)
+        <Box display="flex" justifyContent="center" gap={2} mt={3}>
+          <Button variant="outlined" startIcon={<AddIcon />} onClick={addDynamicRow}>
+            Add Document ({dynamicRows.length}/5)
           </Button>
-          
-          <Button
-            variant="contained"
-            color="success"
-            onClick={handleSubmit}
-            sx={{ borderRadius: 2, px: 4 }}
-          >
+
+          <Button variant="contained" color="success" onClick={handleSubmit}>
             Submit Documents
           </Button>
         </Box>

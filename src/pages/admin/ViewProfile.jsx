@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -19,6 +19,7 @@ import { deepPurple } from "@mui/material/colors";
 import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
+import { jwtDecode } from "jwt-decode";
 
 /* --------------------------- Date Formatter --------------------------- */
 const formatDate = (date) => {
@@ -27,10 +28,17 @@ const formatDate = (date) => {
 };
 
 export default function ViewProfile() {
+  console.log('ViewProfile called');
+  // const { hrmsNo } = useParams();   // <-- read from URL
   const location = useLocation();
-  const { hrmsNo } = useParams();
-
+  console.log(location)
   const [user, setUser] = useState(location.state?.user || null);
+  const hrmsNo = user.hrmsNo;
+  console.log(user)
+  console.log(hrmsNo)
+  
+
+  // const [user, setUser] = useState(location.state?.user || null);
   const [installments, setInstallments] = useState([
     { date: null, amount: 0, paid: false },
     { date: null, amount: 0, paid: false },
@@ -88,7 +96,7 @@ export default function ViewProfile() {
           console.log("📤 Sending payload:", payload);
 
           await axios.put(
-            `http://localhost:5000/api/funds/${user.hrmsNo}`,
+            `http://localhost:3000/funds/upd-ints/${user.hrmsNo}`,
             payload
           );
 
@@ -119,7 +127,7 @@ export default function ViewProfile() {
   useEffect(() => {
     if (!user) {
       axios
-        .get(`http://localhost:5000/api/employees/${hrmsNo}`)
+        .get(`http://localhost:3000/employees/get-emp-prf/${hrmsNo}`)
         .then((res) => {
           setUser(res.data);
           if (res.data.welfarePayments) {
@@ -132,11 +140,12 @@ export default function ViewProfile() {
         setInstallments(user.welfarePayments);
       }
     }
-  }, []);
+  }, [hrmsNo]);
+
 
   useEffect(() => {
     if (user) {
-      axios.get(`http://localhost:5000/api/funds/${user.hrmsNo}`)
+      axios.get(`http://localhost:3000/funds/${user.hrmsNo}`)
         .then(res => {
           const f = res.data;
           setInstallments([

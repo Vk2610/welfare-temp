@@ -11,8 +11,6 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import Container from "@mui/material/Container";
 import IconButton from "@mui/material/IconButton";
-import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 // Create a green theme
@@ -49,14 +47,15 @@ const UserProfile = () => {
         }
 
         const decoded = jwtDecode(token);
-        const id = decoded.id;
+        const hrmsNo = decoded.hrmsNo;
+        console.log('profile hrms ', hrmsNo);
 
-        const res = await axios.get(`http://localhost:3000/profile/${id}`, {
+        const res = await axios.get(`http://localhost:3000/employees/get-emp-prf/${hrmsNo}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         // Map backend response to frontend fields
-        const userData = res.data.result || {};
+        const userData = res.data || {};
         setUser({
           hrmsNo: userData.hrmsNo || "",
           employeeName: userData.employeeName || "",
@@ -134,10 +133,10 @@ const UserProfile = () => {
       }
 
       const decoded = jwtDecode(token);
-      const id = decoded.id;
+      const hrmsNo = decoded.hrmsNo;
 
       const response = await axios.put(
-        `http://localhost:3000/profile/${id}`,
+        `http://localhost:3000/employees/upd-emp/${hrmsNo}`,
         user,
         {
           headers: { Authorization: `Bearer ${token}` },
